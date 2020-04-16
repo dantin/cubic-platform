@@ -1,4 +1,4 @@
-package com.github.dantin.ultrasound.oauth2.config;
+package com.github.dantin.cubic.oauth2.config;
 
 import java.security.KeyPair;
 import javax.sql.DataSource;
@@ -22,21 +22,21 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 
 @Configuration
 @EnableAuthorizationServer
-@EnableConfigurationProperties(AuthServerProperties.class)
+@EnableConfigurationProperties(SecurityProperties.class)
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
-  private final AuthServerProperties authServerProperties;
+  private final SecurityProperties securityProperties;
   private final DataSource dataSource;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
 
   public AuthServerConfig(
-      AuthServerProperties authServerProperties,
+      SecurityProperties securityProperties,
       DataSource dataSource,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
       UserDetailsService userDetailsService) {
-    this.authServerProperties = authServerProperties;
+    this.securityProperties = securityProperties;
     this.dataSource = dataSource;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -60,7 +60,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
   @Bean
   public JwtAccessTokenConverter accessTokenConverter() {
-    AuthServerProperties.JwtProperties jwtProperties = authServerProperties.getJwt();
+    SecurityProperties.JwtProperties jwtProperties = securityProperties.getJwt();
     KeyStoreKeyFactory keyStoreKeyFactory =
         new KeyStoreKeyFactory(
             jwtProperties.getKeyStore(), jwtProperties.getKeyStorePassword().toCharArray());
