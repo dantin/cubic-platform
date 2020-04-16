@@ -1,0 +1,41 @@
+plugins {
+    id 'com.github.sherter.google-java-format' version '0.8'
+    id 'idea'
+}
+
+idea {
+    project {
+        jdkName = '1.9'
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    group = 'com.github.dantin.ultrasound'
+    version = '0.0.1-SNAPSHOT'
+}
+
+subprojects {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
+
+    ext {
+        compileJava.options.encoding = 'UTF-8'
+        compileTestJava.options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+wrapper {
+    gradleVersion = '6.1'
+}

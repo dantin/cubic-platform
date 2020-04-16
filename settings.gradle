@@ -1,0 +1,3 @@
+rootProject.name = 'ultrasound-platform'
+
+include 'services:oauth2-service'
