@@ -1,0 +1,31 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group = "${rootProject.group}"
+version = "${rootProject.version}"
+archivesBaseName = 'authentication-service'
+
+dependencies {
+    // web
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-actuator")
+    //implementation("org.springframework.boot:spring-boot-devtools")
+    // security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
+
+    // persistence
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    runtimeOnly("org.postgresql:postgresql")
+
+    // config properties processor
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("io.rest-assured:rest-assured")
+}

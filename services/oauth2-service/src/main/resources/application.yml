@@ -1,0 +1,14 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: postgres
+    password: password
+oauth2:
+  jwt:
+    key-store: classpath:keystore.jks
+    key-pair-alias: ultrasound
+    key-pair-password: password
+    key-store-password: password
