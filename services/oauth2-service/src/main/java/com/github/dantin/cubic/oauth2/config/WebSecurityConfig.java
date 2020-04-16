@@ -1,4 +1,4 @@
-package com.github.dantin.ultrasound.oauth2.config;
+package com.github.dantin.cubic.oauth2.config;
 
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;

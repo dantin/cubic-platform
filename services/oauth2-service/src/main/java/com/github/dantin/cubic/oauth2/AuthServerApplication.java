@@ -1,10 +1,9 @@
-package com.github.dantin.ultrasound.oauth2;
+package com.github.dantin.cubic.oauth2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 
-@SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
+@SpringBootApplication
 public class AuthServerApplication {
   public static void main(String[] args) {
     SpringApplication.run(AuthServerApplication.class, args);

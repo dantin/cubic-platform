@@ -1,10 +1,10 @@
-package com.github.dantin.ultrasound.oauth2.config;
+package com.github.dantin.cubic.oauth2.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 
-@ConfigurationProperties(prefix = "oauth2")
-public class AuthServerProperties {
+@ConfigurationProperties(prefix = "security.oauth2")
+public class SecurityProperties {
 
   private JwtProperties jwt;
 
