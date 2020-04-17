@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   @Override
   public UserDetailsService userDetailsService() {
+    // TODO: here we mixed user-service with oauth2-service.
     JdbcDaoImpl jdbcDao = new JdbcDaoImpl();
     jdbcDao.setDataSource(dataSource);
     return jdbcDao;
