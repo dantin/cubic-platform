@@ -11,6 +11,10 @@ Generate keystore:
 
     $ keytool -genkeypair -alias ultrasound -keyalg RSA -keypass password -keystore keystore.jks -storepass password
 
+Export public key:
+
+    $ keytool -list -rfc --keystore keystore.jks | openssl x509 -inform pem -pubkey -noout
+
 # Resources
 
 Spring Security OAuth [Database Schema](https://github.com/spring-projects/spring-security-oauth/blob/spring-security-oauth2/src/test/resources/schema.sql)

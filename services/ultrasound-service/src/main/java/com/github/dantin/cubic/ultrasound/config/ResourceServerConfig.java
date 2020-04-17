@@ -62,8 +62,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
   @Bean
   public JwtAccessTokenConverter accessTokenConverter() {
-    JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
     try {
+      JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
       String key =
           new String(
               Files.readAllBytes(securityProperties.getJwt().getPublicKey().getFile().toPath()));
