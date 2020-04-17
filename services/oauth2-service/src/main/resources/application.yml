@@ -6,6 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
     username: postgres
     password: password
+
 security:
   oauth2:
     jwt:
@@ -13,3 +14,7 @@ security:
       key-pair-alias: ultrasound
       key-pair-password: password
       key-store-password: password
+
+logging:
+  level:
+    ROOT: info
