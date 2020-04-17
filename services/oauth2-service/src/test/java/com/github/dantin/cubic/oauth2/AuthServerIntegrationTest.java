@@ -12,7 +12,12 @@ import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -21,6 +26,10 @@ import org.springframework.util.MultiValueMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SqlGroup({
+  @Sql(scripts = "/schema.sql", config = @SqlConfig(transactionMode = TransactionMode.ISOLATED)),
+  @Sql(scripts = "/init-data.sql")
+})
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class AuthServerIntegrationTest {
@@ -40,9 +49,9 @@ public class AuthServerIntegrationTest {
             .perform(
                 post("/oauth/token")
                     .params(params)
-                    .with(httpBasic("ultrasound_service", "password"))
-                    .contentType("application/json;charset=UTF-8")
-                    .accept("*/*"))
+                    .with(httpBasic("dummy_client", "password"))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
 
     String resultString = result.andReturn().getResponse().getContentAsString();

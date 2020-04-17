@@ -14,6 +14,10 @@ test: vet
 jar:
 	@./gradlew bootJar
 
+.PHONY: clean
+clean:
+	@./gradlew clean
+
 .PHONY: docker
 docker: jar
 	docker build --force-rm -t apm/ultrasound-server .
