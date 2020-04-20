@@ -2,6 +2,7 @@ rootProject.name = 'ultrasound-platform'
 
 include 'shared:common-base'
 include 'shared:common-uid'
+include 'shared:uid-autoconfigure'
 
 include 'services:discovery-service'
 include 'services:oauth2-service'
