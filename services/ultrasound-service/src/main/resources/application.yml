@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: ultrasound-service
+
 security:
   oauth2:
     jwt:
