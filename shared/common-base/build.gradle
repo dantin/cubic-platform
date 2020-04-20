@@ -1,0 +1,8 @@
+
+dependencies {
+    implementation('com.google.guava:guava:28.2-jre')
+    implementation('org.apache.commons:commons-lang3:3.7')
+    implementation('org.slf4j:slf4j-api:1.7.29')
+
+    testImplementation('junit:junit:4.12')
+}
