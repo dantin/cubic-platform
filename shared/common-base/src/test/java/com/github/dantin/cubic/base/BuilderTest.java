@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.shared.base;
+package com.github.dantin.cubic.base;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.shared.base;
+package com.github.dantin.cubic.base;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.shared.base;
+package com.github.dantin.cubic.base;
 
 import com.google.common.base.Strings;
 import java.util.concurrent.ConcurrentHashMap;
