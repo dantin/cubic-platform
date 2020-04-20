@@ -1,11 +1,10 @@
 plugins {
     id 'org.springframework.boot' version '2.2.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-    id 'java'
 }
 
-group = "${rootProject.group}"
-version = "${rootProject.version}"
+//group = "${rootProject.group}"
+//version = "${rootProject.version}"
 archivesBaseName = 'oauth2-service'
 
 dependencies {

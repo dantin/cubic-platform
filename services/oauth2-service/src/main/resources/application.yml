@@ -2,6 +2,8 @@ server:
   port: 8083
 
 spring:
+  application:
+    name: oauth2-service
   datasource:
     url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
     username: postgres

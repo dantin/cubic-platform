@@ -5,20 +5,20 @@ plugins {
 
 idea {
     project {
-        jdkName = '1.9'
+        jdkName = '1.8'
     }
 }
 
 allprojects {
-    apply plugin: 'java'
-
-    group = 'com.github.dantin.ultrasound'
+    group = 'com.github.dantin.cubic'
     version = '0.0.1-SNAPSHOT'
 }
 
 subprojects {
-    sourceCompatibility = JavaVersion.VERSION_1_9
-    targetCompatibility = JavaVersion.VERSION_1_9
+    apply plugin: 'java'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     ext {
         compileJava.options.encoding = 'UTF-8'
