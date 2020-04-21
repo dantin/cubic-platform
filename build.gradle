@@ -30,6 +30,10 @@ subprojects {
         jodaTimeVersion = '2.9.9'
         commonsLang3Version = '3.7'
         guavaVersion = '28.2-jre'
+
+        myBatisSpringBootStarterVersion = '2.1.1'
+        pageHelperSpringBootStarterVersion = '1.2.12'
+        druidSpringBootStarterVersion = '1.1.18'
     }
 
     repositories {
