@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.dantin.cubic.user.repository.UserMapper">
+  <sql id="BASE_TABLE">
+        "t_users"
+    </sql>
+
+  <sql id="BASE_COLUMNS">
+        "id", "username", "password", "create_at", "update_at", "enabled"
+    </sql>
+
+  <resultMap id="userMap" type="com.github.dantin.cubic.user.entity.model.User">
+    <id property="id" column="id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <result property="username" column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <result property="password" column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <result property="createAt" column="create_at" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    <result property="updateAt" column="update_at" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    <result property="enabled" column="enabled" javaType="java.lang.Boolean" jdbcType="INTEGER" typeHandler="com.github.dantin.cubic.user.entity.handler.EnabledTypeHandler"/>
+  </resultMap>
+
+  <select id="findByUsername" resultMap="userMap">
+    SELECT
+    <include refid="BASE_COLUMNS"/>
+    FROM
+    <include refid="BASE_TABLE"/>
+    WHERE
+    "username" = #{username}
+    LIMIT 1
+  </select>
+
+  <insert id="save" parameterType="com.github.dantin.cubic.user.entity.model.User">
+    INSERT INTO
+    <include refid="BASE_TABLE"/>
+    <trim prefix="(" suffix=")" suffixOverrides=", ">
+    "id",
+    "username",
+    "password",
+    "create_at",
+    "update_at",
+    "enabled",
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=", ">
+    #{id},
+    #{username},
+    #{password},
+    #{createAt},
+    #{updateAt},
+    #{enabled},
+    </trim>
+  </insert>
+
+  <delete id="deleteById">
+    DELETE FROM
+    <include refid="BASE_TABLE"/>
+    WHERE
+    "id" = #{id}
+  </delete>
+</mapper>
