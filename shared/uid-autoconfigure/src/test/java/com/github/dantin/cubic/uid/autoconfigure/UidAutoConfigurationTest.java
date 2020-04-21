@@ -30,9 +30,7 @@ public class UidAutoConfigurationTest {
   @Test
   public void testCachedUidGenerator() {
     this.contextRunner
-        .withPropertyValues("customized.uid.cached-setting.boost-power:2")
-        .withPropertyValues("customized.uid.cached-setting.padding-factor:60")
-        .withPropertyValues("customized.uid.cached-setting.schedule-interval:60")
+        .withPropertyValues("customized.uid.generator-strategy:cached")
         .run(
             (context -> {
               UidGenerator uidGenerator = context.getBean(UidGenerator.class);

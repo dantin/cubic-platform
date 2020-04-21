@@ -1,9 +1,9 @@
 package com.github.dantin.cubic.uid.autoconfigure;
 
 import com.github.dantin.cubic.uid.UidGenerator;
+import com.github.dantin.cubic.uid.autoconfigure.UidProperties.GeneratorStrategy;
 import com.github.dantin.cubic.uid.autoconfigure.helper.CachedUidGeneratorAdapter;
 import com.github.dantin.cubic.uid.autoconfigure.helper.DefaultUidGeneratorAdapter;
-import java.util.Objects;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,9 +26,7 @@ public class UidAutoConfiguration {
   @ConditionalOnClass({UidGenerator.class})
   @ConditionalOnMissingBean
   UidGenerator uidGenerator(Environment env) {
-    if (!Objects.isNull(uidProperties.getCachedSetting().getBoostPower())
-        && !Objects.isNull(uidProperties.getCachedSetting().getPaddingFactor())
-        && !Objects.isNull(uidProperties.getCachedSetting().getScheduleInterval())) {
+    if (uidProperties.getGeneratorStrategy() == GeneratorStrategy.CACHED) {
       return new CachedUidGeneratorAdapter(uidProperties);
     }
     return new DefaultUidGeneratorAdapter(uidProperties);

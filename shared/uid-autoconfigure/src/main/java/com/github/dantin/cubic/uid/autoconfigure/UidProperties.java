@@ -14,8 +14,8 @@ public class UidProperties {
   private Integer timeBits = 28;
   private Integer workerBits = 22;
   private Integer seqBits = 13;
-
   private String epoch = "2016-05-20";
+  private GeneratorStrategy generatorStrategy = GeneratorStrategy.DEFAULT;
 
   private CachedSetting cachedSetting = new CachedSetting();
 
@@ -29,7 +29,6 @@ public class UidProperties {
     if (timeBits > 0) {
       this.timeBits = timeBits;
     }
-    this.timeBits = 28;
   }
 
   public Integer getWorkerBits() {
@@ -40,7 +39,6 @@ public class UidProperties {
     if (workerBits > 0) {
       this.workerBits = workerBits;
     }
-    this.workerBits = 22;
   }
 
   public Integer getSeqBits() {
@@ -51,7 +49,6 @@ public class UidProperties {
     if (seqBits > 0) {
       this.seqBits = seqBits;
     }
-    this.seqBits = 13;
   }
 
   public String getEpoch() {
@@ -62,7 +59,6 @@ public class UidProperties {
     if (!Strings.isNullOrEmpty(epoch)) {
       this.epoch = epoch;
     }
-    this.epoch = "2016-05-20";
   }
 
   public Long getWorkerId() {
@@ -81,10 +77,18 @@ public class UidProperties {
     this.cachedSetting = cachedSetting;
   }
 
+  public GeneratorStrategy getGeneratorStrategy() {
+    return generatorStrategy;
+  }
+
+  public void setGeneratorStrategy(GeneratorStrategy generatorStrategy) {
+    this.generatorStrategy = generatorStrategy;
+  }
+
   public static class CachedSetting {
-    private Integer boostPower;
-    private Integer paddingFactor;
-    private Long scheduleInterval;
+    private Integer boostPower = 32;
+    private Integer paddingFactor = 80;
+    private Long scheduleInterval = 60L;
 
     public Integer getBoostPower() {
       return boostPower;
@@ -109,5 +113,13 @@ public class UidProperties {
     public void setScheduleInterval(Long scheduleInterval) {
       this.scheduleInterval = scheduleInterval;
     }
+  }
+
+  /** Strategies for Unique ID Generator. */
+  public enum GeneratorStrategy {
+    /** Default strategy */
+    DEFAULT,
+    /** Cached strategy */
+    CACHED;
   }
 }
