@@ -1,0 +1,93 @@
+{
+  "groups": [
+    {
+      "name": "customized.uid",
+      "type": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "customized.uid.worker-id",
+      "type": "java.lang.Long",
+      "description": "Value of the worker id(must be positive).",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "1"
+    },
+    {
+      "name": "customized.uid.time-bits",
+      "type": "java.lang.Integer",
+      "description": "Delta seconds since epoch.",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "28"
+    },
+    {
+      "name": "customized.uid.worker-bits",
+      "type": "java.lang.Integer",
+      "description": "Worker's id which assigns based on database",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "22"
+    },
+    {
+      "name": "customized.uid.seq-bits",
+      "type": "java.lang.Integer",
+      "description": "sequence within the same second",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "13"
+    },
+    {
+      "name": "customized.uid.epoch",
+      "type": "java.lang.String",
+      "description": "The customized epoch (time format is 'YYYY-MM-DD')",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "2016-05-20"
+    },
+    {
+      "name": "customized.uid.generator-strategy",
+      "type": "com.github.dantin.cubic.uid.autoconfigure.UidProperties$GeneratorStrategy",
+      "description": "The generator strategy of Unique ID",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties",
+      "defaultValue": "DEFAULT"
+    },
+    {
+      "name": "customized.uid.cached-setting",
+      "type": "com.github.dantin.cubic.uid.autoconfigure.UidProperties$CachedSetting",
+      "description": "Cached implementation of UID Generator",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties"
+    },
+    {
+      "name": "customized.uid.cached-setting.boostPower",
+      "type": "java.lang.Integer",
+      "description": "RingBuffer RingBuffer size boost for a power of 2",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties$CachedSetting",
+      "defaultValue": 32
+    },
+    {
+      "name": "customized.uid.cached-setting.paddingFactor",
+      "type": "java.lang.Integer",
+      "description": "Represents a percent value of (0 - 100).",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties$CachedSetting",
+      "defaultValue": 80
+    },
+    {
+      "name": "customized.uid.cached-setting.scheduleInterval",
+      "type": "java.lang.Long",
+      "description": "Padding buffer in a schedule, specify padding buffer interval.",
+      "sourceType": "com.github.dantin.cubic.uid.autoconfigure.UidProperties$CachedSetting",
+      "defaultValue": 60
+    }
+  ],
+  "hints": [
+    {
+      "name": "customized.uid.generator-strategy",
+      "values": [
+        {
+          "value": "DEFAULT"
+        },
+        {
+          "value": "CACHED"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+
+dependencies {
+    compile('joda-time:joda-time:2.9.9')
+
+    compile project(":shared:common-base")
+
+    testCompile('junit:junit:4.12')
+}
