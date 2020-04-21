@@ -1,7 +1,7 @@
 
 dependencies {
     compile("com.google.guava:guava:${guavaVersion}")
-    compile("org.apache.commons:${commonsLang3Version}")
+    compile("org.apache.commons:commons-lang3:${commonsLang3Version}")
     compile("org.slf4j:slf4j-api:${slf4jApiVersion}")
 
     testCompile("junit:junit:${junitVersion}")
