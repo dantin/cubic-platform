@@ -23,6 +23,13 @@ subprojects {
     ext {
         compileJava.options.encoding = 'UTF-8'
         compileTestJava.options.encoding = 'UTF-8'
+
+        springCloudVersion = 'Hoxton.SR1'
+        junitVersion = '4.12'
+        slf4jApiVersion = '1.7.29'
+        jodaTimeVersion = '2.9.9'
+        commonsLang3Version = '3.7'
+        guavaVersion = '28.2-jre'
     }
 
     repositories {
