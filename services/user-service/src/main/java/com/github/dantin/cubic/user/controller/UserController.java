@@ -1,5 +1,6 @@
 package com.github.dantin.cubic.user.controller;
 
+import com.github.dantin.cubic.protocol.user.UserDto;
 import com.github.dantin.cubic.user.entity.model.User;
 import com.github.dantin.cubic.user.service.UserService;
 import org.slf4j.Logger;
@@ -24,14 +25,23 @@ public class UserController {
   }
 
   @GetMapping("/{username}")
-  public ResponseEntity<User> loadUserByUsername(@PathVariable("username") String username) {
+  public ResponseEntity<UserDto> loadUserByUsername(@PathVariable("username") String username) {
     LOGGER.info("load user by username {}", username);
     try {
       User user = this.userService.loadUserByUsername(username);
-      return ResponseEntity.ok(user);
+      return ResponseEntity.ok(buildUserDto(user));
     } catch (RuntimeException e) {
       LOGGER.warn("fail to load user", e);
       return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
+  }
+
+  private UserDto buildUserDto(User user) {
+    UserDto entity = new UserDto();
+    entity.setUsername(user.getUsername());
+    entity.setEnabled(user.getEnabled());
+    entity.setPassword(user.getPassword());
+    entity.setRole(user.getRole());
+    return entity;
   }
 }

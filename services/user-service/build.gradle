@@ -5,13 +5,27 @@ plugins {
 
 archivesBaseName = 'user-service'
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
+    implementation project(":protocol:user-protocol")
     implementation project(":shared:uid-autoconfigure")
+
+    // config properties processor
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-actuator")
     //implementation("org.springframework.boot:spring-boot-devtools")
+
+    // cloud
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 
     // cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -21,9 +35,6 @@ dependencies {
         exclude group: "io.lettuce", module: "lettuce-core"
     }
     implementation("redis.clients:jedis")
-
-    // config properties processor
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     // persist layer
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${myBatisSpringBootStarterVersion}")
