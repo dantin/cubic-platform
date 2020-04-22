@@ -1,7 +1,9 @@
 package com.github.dantin.cubic.oauth2.config;
 
+import com.github.dantin.cubic.oauth2.config.SecurityProperties.JwtProperties;
 import java.security.KeyPair;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +37,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
       DataSource dataSource,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
-      UserDetailsService userDetailsService) {
+      @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
     this.securityProperties = securityProperties;
     this.dataSource = dataSource;
     this.passwordEncoder = passwordEncoder;
@@ -60,7 +62,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
   @Bean
   public JwtAccessTokenConverter accessTokenConverter() {
-    SecurityProperties.JwtProperties jwtProperties = securityProperties.getJwt();
+    JwtProperties jwtProperties = securityProperties.getJwt();
     KeyStoreKeyFactory keyStoreKeyFactory =
         new KeyStoreKeyFactory(
             jwtProperties.getKeyStore(), jwtProperties.getKeyStorePassword().toCharArray());

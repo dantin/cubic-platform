@@ -4,6 +4,8 @@ include 'shared:common-base'
 include 'shared:common-uid'
 include 'shared:uid-autoconfigure'
 
+include 'protocol:user-protocol'
+
 include 'services:discovery-service'
 include 'services:oauth2-service'
 include 'services:user-service'
