@@ -41,7 +41,9 @@ dependencies {
     implementation("com.github.pagehelper:pagehelper-spring-boot-starter:${pageHelperSpringBootStarterVersion}")
     implementation("com.alibaba:druid-spring-boot-starter:${druidSpringBootStarterVersion}")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("it.ozimov:embedded-redis:0.7.2")
 }
