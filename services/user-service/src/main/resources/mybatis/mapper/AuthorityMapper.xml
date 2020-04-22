@@ -28,8 +28,8 @@
     INSERT INTO
     <include refid="BASE_TABLE"/>
     <trim prefix="(" suffix=")" suffixOverrides=", ">
-    "username",
-    "authority",
+    username,
+    authority,
     </trim>
     VALUES
     <trim prefix="(" suffix=")" suffixOverrides=", ">

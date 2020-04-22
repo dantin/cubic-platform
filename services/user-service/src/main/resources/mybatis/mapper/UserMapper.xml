@@ -32,12 +32,12 @@
     INSERT INTO
     <include refid="BASE_TABLE"/>
     <trim prefix="(" suffix=")" suffixOverrides=", ">
-    "id",
-    "username",
-    "password",
-    "create_at",
-    "update_at",
-    "enabled",
+    id,
+    username,
+    password,
+    create_at,
+    update_at,
+    enabled,
     </trim>
     VALUES
     <trim prefix="(" suffix=")" suffixOverrides=", ">
@@ -54,6 +54,6 @@
     DELETE FROM
     <include refid="BASE_TABLE"/>
     WHERE
-    "id" = #{id}
+    id = #{id}
   </delete>
 </mapper>
