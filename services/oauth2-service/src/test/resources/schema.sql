@@ -45,21 +45,3 @@ CREATE TABLE IF NOT EXISTS oauth_code (
     code                    VARCHAR(256),
     authentication          BLOB
 );
-
--- users
-CREATE TABLE IF NOT EXISTS users (
-    id                      VARCHAR(256) PRIMARY KEY,
-    username                VARCHAR(256),
-    password                VARCHAR(256),
-    create_at               TIMESTAMP,
-    update_at               TIMESTAMP,
-    enabled                 TINYINT(1),
-    UNIQUE KEY unique_username(username)
-);
-
--- authorities
-CREATE TABLE IF NOT EXISTS authorities (
-    username                VARCHAR(256) NOT NULL,
-    authority               VARCHAR(256) NOT NULL,
-    PRIMARY KEY(username, authority)
-);

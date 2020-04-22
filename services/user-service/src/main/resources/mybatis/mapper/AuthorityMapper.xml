@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.dantin.cubic.user.repository.AuthorityMapper">
   <sql id="BASE_TABLE">
-        "t_authorities"
+        t_authorities
     </sql>
 
   <sql id="BASE_COLUMNS">
-        "username", "authority"
+        username, authority
     </sql>
 
   <resultMap id="authorityMap" type="com.github.dantin.cubic.user.entity.model.Authority">
@@ -20,7 +20,7 @@
     FROM
     <include refid="BASE_TABLE"/>
     WHERE
-    "username" = #{username}
+    username = #{username}
     LIMIT 1
   </select>
 
