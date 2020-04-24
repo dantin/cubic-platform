@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.dantin.cubic.room.repository.RoomAllocationMapper">
+  <sql id="BASE_TABLE">
+        t_room_allocation
+    </sql>
+
+  <sql id="BASE_COLUMNS">
+        user_id, room_id
+    </sql>
+
+  <resultMap id="roomAllocationMap" type="com.github.dantin.cubic.room.entity.model.RoomAllocation">
+    <result property="roomId" column="room_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <result property="userId" column="user_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <select id="findByUserId" resultMap="roomAllocationMap">
+    SELECT
+    <include refid="BASE_COLUMNS"/>
+    FROM
+    <include refid="BASE_TABLE"/>
+    WHERE
+    user_id = #{user_id}
+  </select>
+</mapper>

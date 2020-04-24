@@ -34,6 +34,9 @@ subprojects {
         myBatisSpringBootStarterVersion = '2.1.1'
         pageHelperSpringBootStarterVersion = '1.2.12'
         druidSpringBootStarterVersion = '1.1.18'
+
+        embeddedRedisVersion = '0.7.2'
+        jacksonAnnotationsVersion = '2.10.1'
     }
 
     repositories {

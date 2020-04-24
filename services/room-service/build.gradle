@@ -3,7 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
 
-archivesBaseName = 'user-service'
+archivesBaseName = 'room-service'
 
 dependencyManagement {
     imports {
@@ -12,8 +12,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation project(":protocol:user-protocol")
     implementation project(":shared:uid-autoconfigure")
+    implementation project(":protocol:common-protocol")
 
     // config properties processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
