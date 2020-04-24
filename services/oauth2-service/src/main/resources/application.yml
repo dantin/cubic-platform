@@ -28,3 +28,4 @@ security:
 logging:
   level:
     ROOT: info
+    com.springframework.security.oauth2.provider.endpoint: debug
