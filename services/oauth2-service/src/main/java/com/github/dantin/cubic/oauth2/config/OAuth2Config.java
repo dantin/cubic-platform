@@ -25,14 +25,14 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 @Configuration
 @EnableAuthorizationServer
 @EnableConfigurationProperties(SecurityProperties.class)
-public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
+public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
   private final SecurityProperties securityProperties;
   private final DataSource dataSource;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
 
-  public AuthServerConfig(
+  public OAuth2Config(
       SecurityProperties securityProperties,
       DataSource dataSource,
       PasswordEncoder passwordEncoder,
