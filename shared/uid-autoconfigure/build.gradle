@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
+    compile project(":shared:common-uid")
+
     implementation("org.springframework.boot:spring-boot-autoconfigure")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-
-    compile project(":shared:common-uid")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

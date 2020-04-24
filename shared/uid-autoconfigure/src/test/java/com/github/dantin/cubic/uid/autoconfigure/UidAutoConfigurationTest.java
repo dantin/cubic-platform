@@ -3,9 +3,9 @@ package com.github.dantin.cubic.uid.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.github.dantin.cubic.uid.CachedUidGenerator;
+import com.github.dantin.cubic.uid.DefaultUidGenerator;
 import com.github.dantin.cubic.uid.UidGenerator;
-import com.github.dantin.cubic.uid.autoconfigure.helper.CachedUidGeneratorAdapter;
-import com.github.dantin.cubic.uid.autoconfigure.helper.DefaultUidGeneratorAdapter;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -22,7 +22,7 @@ public class UidAutoConfigurationTest {
     this.contextRunner.run(
         (context -> {
           UidGenerator uidGenerator = context.getBean(UidGenerator.class);
-          assertThat(uidGenerator).isInstanceOf(DefaultUidGeneratorAdapter.class);
+          assertThat(uidGenerator).isInstanceOf(DefaultUidGenerator.class);
           assertTrue(uidGenerator.getUID() > 0L);
         }));
   }
@@ -34,7 +34,7 @@ public class UidAutoConfigurationTest {
         .run(
             (context -> {
               UidGenerator uidGenerator = context.getBean(UidGenerator.class);
-              assertThat(uidGenerator).isInstanceOf(CachedUidGeneratorAdapter.class);
+              assertThat(uidGenerator).isInstanceOf(CachedUidGenerator.class);
               assertTrue(uidGenerator.getUID() > 0L);
             }));
   }
