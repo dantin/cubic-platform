@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 
 public class DefaultUidGeneratorAdapter implements UidGenerator {
 
-  private UidGenerator uidGenerator;
+  private final UidGenerator uidGenerator;
 
   public DefaultUidGeneratorAdapter(UidProperties uidProperties) {
     Assert.isTrue(uidProperties.getWorkerId() >= 0, "worker id must be 0 or positive");

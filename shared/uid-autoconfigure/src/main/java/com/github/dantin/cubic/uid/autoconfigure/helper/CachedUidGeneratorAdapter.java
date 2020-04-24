@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 
 public class CachedUidGeneratorAdapter implements UidGenerator, DisposableBean {
 
-  private UidGenerator uidGenerator;
+  private final UidGenerator uidGenerator;
 
   public CachedUidGeneratorAdapter(UidProperties uidProperties) {
     Assert.isTrue(uidProperties.getWorkerId() >= 0, "worker id must be 0 or positive");
