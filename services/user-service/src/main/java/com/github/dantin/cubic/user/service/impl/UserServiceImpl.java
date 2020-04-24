@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,9 @@ public class UserServiceImpl implements UserService {
   private final AuthorityMapper authorityMapper;
 
   public UserServiceImpl(
-      UidGenerator uidGenerator,
+      // On test profile, `@ConditionalOnMissingBean` was resolved before JAR libs, mark `@Lazy`
+      // here to avoid injection error.
+      @Lazy UidGenerator uidGenerator,
       PasswordEncoder passwordEncoder,
       UserMapper userMapper,
       AuthorityMapper authorityMapper) {

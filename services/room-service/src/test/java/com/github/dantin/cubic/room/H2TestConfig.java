@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.user.config;
+package com.github.dantin.cubic.room;
 
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
