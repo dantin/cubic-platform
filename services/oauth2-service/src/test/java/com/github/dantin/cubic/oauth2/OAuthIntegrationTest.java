@@ -8,7 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 // need oauth2-service to be running.
-public class AuthServerMvcTest {
+public class OAuthIntegrationTest {
 
   private static final String CLIENT_ID = "ultrasound_service";
   private static final String CLIENT_SECRET = "password";
