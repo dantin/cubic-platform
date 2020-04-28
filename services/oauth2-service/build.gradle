@@ -7,34 +7,50 @@ plugins {
 //version = "${rootProject.version}"
 archivesBaseName = 'oauth2-service'
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
+ext {
+    resteasyVersion = '3.9.0.Final'
+    keycloakVersion = '8.0.0'
+    jbossModulesVersion = '1.9.2.Final'
 }
 
 dependencies {
-    implementation project(":protocol:user-protocol")
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-actuator")
     //implementation("org.springframework.boot:spring-boot-devtools")
     // security
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
+    //implementation("org.springframework.boot:spring-boot-starter-security")
+    //implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
     // cloud
-    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    //implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 
     // persistence
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
+
+    // Keycloak server
+    implementation("org.jboss.resteasy:resteasy-jaxb-provider:${resteasyVersion}")
+    implementation("org.jboss.resteasy:resteasy-jackson2-provider:${resteasyVersion}")
+    implementation("org.infinispan:infinispan-core")
+    implementation("org.freemarker:freemarker")
+    implementation("org.keycloak:keycloak-model-infinispan:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-model-jpa:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-js-adapter:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-themes:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-saml-core:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-authz-policy-common:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-wildfly-extensions:${keycloakVersion}")
+    implementation("org.keycloak:keycloak-services:${keycloakVersion}") {
+        exclude group: "org.jboss.spec.javax.serlvet", module:"jboss-servlet-api_3.0_spec"
+    }
+    implementation("org.jboss.modules:jboss-modules:${jbossModulesVersion}")
 
     // config properties processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
+    //testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.rest-assured:rest-assured")
 }

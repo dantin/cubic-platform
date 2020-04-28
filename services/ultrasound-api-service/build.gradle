@@ -1,0 +1,26 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+
+archivesBaseName = 'ultrasound-service'
+
+dependencies {
+    implementation project(":shared:common-base")
+    // web
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-actuator")
+    //implementation("org.springframework.boot:spring-boot-devtools")
+    // security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
+
+    // config properties processor
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("io.rest-assured:rest-assured")
+}

@@ -5,27 +5,20 @@ spring:
   application:
     name: oauth2-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-    username: postgres
-    password: password
+#    url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#    username: postgres
+#    password: password
+    username: sa
+    url: jdbc:h2:mem:testdb
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 15
-    service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
-
-security:
-  oauth2:
-    jwt:
-      key-store: classpath:keystore.jks
-      key-pair-alias: ultrasound
-      key-pair-password: password
-      key-store-password: password
+keycloak:
+  server:
+    contextPath: /auth
+    adminUser:
+      username: admin
+      password: password
+    realmImportFile: realm-export.json
 
 logging:
   level:
     ROOT: info
-    com.springframework.security.oauth2.provider.endpoint: debug
