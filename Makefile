@@ -21,3 +21,7 @@ clean:
 .PHONY: docker
 docker: jar
 	docker build --force-rm -t apm/ultrasound-server .
+
+.PHONY: uaa
+uaa:
+	cd third-party/uaa;docker build --force-rm -t apm/uaa .

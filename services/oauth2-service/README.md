@@ -19,6 +19,11 @@ Export public key:
 
 Spring Security OAuth [Database Schema](https://github.com/spring-projects/spring-security-oauth/blob/spring-security-oauth2/src/test/resources/schema.sql)
 
+developers.redhat.com/blog/2020/01/29/api-login-and-jwt-token-generation-using-keycloak
+
 ## Test
 
     curl -v -u ultrasound_service:password -X POST "localhost:8083/oauth/token?grant_type=password&username=room01&password=password"
+    
+    curl -L -X POST 'http://localhost:8083/auth/realms/cubic/protocol/openid-connect/token' -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'client_id=ultrasound_api_client' --data-urlencode 'grant_type=password' --data-urlencode 'client_secret=password' --data-urlencode 'scope=read' --data-urlencode 'username=john@test.com' --data-urlencode 'password=123'
+    curl localhost:10001/ultrasound/user/profile -H "Authorization: Bearer $CODE"

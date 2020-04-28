@@ -9,6 +9,7 @@ include 'protocol:user-protocol'
 
 include 'services:discovery-service'
 include 'services:oauth2-service'
+include 'services:gateway-service'
 include 'services:user-service'
 include 'services:room-service'
-include 'services:ultrasound-service'
+include 'services:ultrasound-api-service'
