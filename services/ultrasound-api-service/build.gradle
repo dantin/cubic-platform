@@ -4,6 +4,15 @@ plugins {
 }
 
 archivesBaseName = 'ultrasound-service'
+ext {
+    keycloakVersion = '8.0.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.keycloak.bom:keycloak-adapter-bom:${keycloakVersion}"
+    }
+}
 
 dependencies {
     implementation project(":shared:common-base")
@@ -13,8 +22,9 @@ dependencies {
     //implementation("org.springframework.boot:spring-boot-devtools")
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
+    implementation("org.keycloak:keycloak-spring-boot-starter")
+    //implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    //implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
 
     // config properties processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

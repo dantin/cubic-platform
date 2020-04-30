@@ -5,11 +5,11 @@ spring:
   application:
     name: oauth2-service
   datasource:
-#    url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-#    username: postgres
-#    password: password
-    username: sa
-    url: jdbc:h2:mem:testdb
+    url: jdbc:postgresql://localhost:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: postgres
+    password: password
+#    username: sa
+#    url: jdbc:h2:mem:testdb
 
 keycloak:
   server:
