@@ -1,5 +1,6 @@
 package com.github.dantin.cubic.room.controller;
 
+import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.protocol.SearchCriteria;
 import com.github.dantin.cubic.room.entity.model.Room;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
@@ -52,7 +53,7 @@ public class RoomController {
 
       Room room = roomService.getRoomById(roomAllocation.getRoomId());
       return ResponseEntity.ok(room);
-    } catch (RuntimeException e) {
+    } catch (BusinessException e) {
       LOGGER.warn("fail to retrieve room information", e);
       return ResponseEntity.notFound().build();
     }

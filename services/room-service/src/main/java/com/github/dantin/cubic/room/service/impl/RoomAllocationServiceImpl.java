@@ -1,5 +1,6 @@
 package com.github.dantin.cubic.room.service.impl;
 
+import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
 import com.github.dantin.cubic.room.repository.RoomAllocationMapper;
 import com.github.dantin.cubic.room.service.RoomAllocationService;
@@ -29,7 +30,7 @@ public class RoomAllocationServiceImpl implements RoomAllocationService {
   public RoomAllocation getRoomAllocationByUsername(String username) {
     RoomAllocation roomAllocation = roomAllocationMapper.findByUsername(username);
     if (Objects.isNull(roomAllocation)) {
-      throw new RuntimeException(String.format("user '%s' doesn't have room allocation", username));
+      throw new BusinessException(String.format("user '%s' doesn't have room allocation", username));
     }
     return roomAllocation;
   }
