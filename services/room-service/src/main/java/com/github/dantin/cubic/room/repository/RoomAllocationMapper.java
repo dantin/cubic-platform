@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface RoomAllocationMapper {
 
-  RoomAllocation findByUserId(@Param("user_id") String userId);
+  RoomAllocation findByUsername(@Param("username") String username);
 }

@@ -3,6 +3,7 @@ package com.github.dantin.cubic.room.service.impl;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
 import com.github.dantin.cubic.room.repository.RoomAllocationMapper;
 import com.github.dantin.cubic.room.service.RoomAllocationService;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
@@ -23,9 +24,13 @@ public class RoomAllocationServiceImpl implements RoomAllocationService {
   }
 
   @Transactional(readOnly = true)
-  @Cacheable(key = "#id")
+  @Cacheable(key = "#username")
   @Override
-  public RoomAllocation getRoomAllocationByUserId(String id) {
-    return roomAllocationMapper.findByUserId(id);
+  public RoomAllocation getRoomAllocationByUsername(String username) {
+    RoomAllocation roomAllocation = roomAllocationMapper.findByUsername(username);
+    if (Objects.isNull(roomAllocation)) {
+      throw new RuntimeException(String.format("user '%s' doesn't have room allocation", username));
+    }
+    return roomAllocation;
   }
 }
