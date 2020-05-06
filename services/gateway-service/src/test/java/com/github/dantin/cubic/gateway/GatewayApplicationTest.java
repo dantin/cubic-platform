@@ -1,5 +1,6 @@
-package com.github.dantin.cubic.oauth2;
+package com.github.dantin.cubic.gateway;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,10 +10,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(
-    classes = {OAuth2Application.class},
+    classes = {GatewayApplication.class},
     webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class OAuth2ApplicationTest {
+@Ignore
+public class GatewayApplicationTest {
 
   @Test
   public void contextLoads() {
