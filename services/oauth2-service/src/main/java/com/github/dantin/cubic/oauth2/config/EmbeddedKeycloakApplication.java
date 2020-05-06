@@ -21,7 +21,7 @@ public class EmbeddedKeycloakApplication extends KeycloakApplication {
   public EmbeddedKeycloakApplication() {
     super();
     createMasterRealmAdminUser();
-    createBasicRealm();
+    // createBasicRealm();
   }
 
   private void createMasterRealmAdminUser() {

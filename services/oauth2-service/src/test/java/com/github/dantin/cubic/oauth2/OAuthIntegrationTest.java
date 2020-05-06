@@ -42,12 +42,12 @@ public class OAuthIntegrationTest {
     String tokenUrl = "http://localhost:8083/auth/realms/cubic/protocol/openid-connect/token";
     // obtain authentication url with custom code
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-    params.add("client_id", "ultrasound_api_client");
+    params.add("client_id", "ultrasound_api_service");
     params.add("grant_type", "password");
     params.add("client_secret", "password");
     params.add("scope", "read");
-    params.add("username", "john@test.com");
-    params.add("password", "123");
+    params.add("username", "room01");
+    params.add("password", "password");
 
     Response response = RestAssured.given().formParams(params).post(tokenUrl);
     System.out.println(response.asString());

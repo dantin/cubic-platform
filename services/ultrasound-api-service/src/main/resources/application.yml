@@ -3,15 +3,19 @@ server:
   servlet:
     context-path: /ultrasound
 
+keycloak:
+  realm: ultrasound
+  auth-server-url: http://localhost:8083/auth
+  ssl-required: external
+  resource: ultrasound_api_service
+  credentials:
+    secret: 3d973f0c-d0ed-43b9-8c13-67f5ea73e335
+  use-resource-role-mappings: true
+  bearer-only: true
+
 spring:
   application:
     name: ultrasound-api
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8083/auth/realms/cubic
-          jwk-set-uri: http://localhost:8083/auth/realms/cubic/protocol/openid-connect/certs
 
 logging:
   level:
