@@ -1,19 +1,21 @@
 package com.github.dantin.cubic.oauth2;
 
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(
     classes = {OAuth2Application.class},
     webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class OAuth2MvcTest {
+public class OAuth2AppTest {
 
   @Test
-  public void shouldReturnAuthToken() throws Exception {}
+  public void contextLoads() {
+    // just do context loading
+  }
 }
