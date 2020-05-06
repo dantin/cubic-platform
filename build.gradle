@@ -17,8 +17,10 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    compileJava {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
     ext {
         compileJava.options.encoding = 'UTF-8'
@@ -37,6 +39,8 @@ subprojects {
 
         embeddedRedisVersion = '0.7.2'
         jacksonAnnotationsVersion = '2.10.1'
+
+        keycloakVersion = '8.0.0'
     }
 
     repositories {
