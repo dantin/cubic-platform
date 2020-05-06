@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -34,6 +35,12 @@ public class UltrasoundServerIntegrationTest {
 
   @Autowired private MockMvc mockMvc;
 
+  @Value("${keycloak.resource}")
+  private String clientId;
+
+  @Value("${keycloak.credentials.secret}")
+  private String clientSecret;
+
   @Before
   public void setUp() {
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
@@ -57,8 +64,8 @@ public class UltrasoundServerIntegrationTest {
   private String obtainAccessToken(String username, String password) {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
-    params.add("client_id", "ultrasound_api_service");
-    params.add("client_secret", "3d973f0c-d0ed-43b9-8c13-67f5ea73e335");
+    params.add("client_id", clientId);
+    params.add("client_secret", clientSecret);
     params.add("username", username);
     params.add("password", password);
 
