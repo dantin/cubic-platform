@@ -30,7 +30,8 @@ public class RoomAllocationServiceImpl implements RoomAllocationService {
   public RoomAllocation getRoomAllocationByUsername(String username) {
     RoomAllocation roomAllocation = roomAllocationMapper.findByUsername(username);
     if (Objects.isNull(roomAllocation)) {
-      throw new BusinessException(String.format("user '%s' doesn't have room allocation", username));
+      throw new BusinessException(
+          String.format("user '%s' doesn't have room allocation", username));
     }
     return roomAllocation;
   }

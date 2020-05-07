@@ -5,10 +5,12 @@ include 'shared:common-uid'
 include 'shared:uid-autoconfigure'
 
 include 'protocol:common-protocol'
-include 'protocol:user-protocol'
+include 'protocol:chat-protocol'
 
 include 'services:discovery-service'
 include 'services:oauth2-service'
 include 'services:gateway-service'
 include 'services:room-service'
+include 'services:shm-service'
+include 'services:chat-service'
 include 'services:ultrasound-api-service'

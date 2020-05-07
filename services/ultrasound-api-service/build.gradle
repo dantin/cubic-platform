@@ -3,7 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
 
-archivesBaseName = 'ultrasound-service'
+archivesBaseName = 'ultrasound-api-service'
 
 dependencyManagement {
     imports {
@@ -29,6 +29,5 @@ dependencies {
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    //testImplementation("org.keycloak:keycloak-test-helper")
     testImplementation("io.rest-assured:rest-assured")
 }

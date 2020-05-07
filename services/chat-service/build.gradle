@@ -1,0 +1,38 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+
+archivesBaseName = 'chat-api-service'
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.keycloak.bom:keycloak-adapter-bom:${keycloakVersion}"
+//    }
+//}
+
+dependencies {
+    implementation project(":shared:common-base")
+    implementation project(":protocol:chat-protocol")
+    // web
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-actuator")
+    //implementation("org.springframework.boot:spring-boot-devtools")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis") {
+        // by default Spring Boot 2.0 use Lettuce, to use Jedis we need to exclude Lettuce
+        // dependency and include Jedis.
+        exclude group: "io.lettuce", module: "lettuce-core"
+    }
+    implementation("redis.clients:jedis")
+    // config properties processor
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    // security
+    //implementation("org.springframework.boot:spring-boot-starter-security")
+    //implementation("org.keycloak:keycloak-spring-boot-starter")
+
+    // test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    //testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("io.rest-assured:rest-assured")
+}
