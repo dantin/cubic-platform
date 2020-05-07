@@ -1,0 +1,7 @@
+server:
+  port: 0
+
+media-server:
+  base-url: ${MEDIA_SERVER_URL:http://localhost:9001}
+  username: ${MEDIA_SERVER_USERNAME:admin}
+  password: ${MEDIA_SERVER_PASSWORD:password}
