@@ -18,9 +18,9 @@ import org.springframework.stereotype.Controller;
 /** MessageController provides message related API. */
 @Controller
 @EnableConfigurationProperties(ChannelProperties.class)
-public class MessageController {
+public class ChatController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
 
   private final ChannelProperties channelProperties;
   private final RedisTemplate<String, String> redisTemplate;
@@ -29,7 +29,7 @@ public class MessageController {
   @Value("${status.onlineUserKey:onlineUsers}")
   private String onlineUser;
 
-  public MessageController(
+  public ChatController(
       ChannelProperties channelProperties,
       RedisTemplate<String, String> redisTemplate,
       ObjectMapper objectMapper) {

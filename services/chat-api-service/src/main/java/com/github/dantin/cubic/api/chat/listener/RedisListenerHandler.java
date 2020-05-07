@@ -3,7 +3,7 @@ package com.github.dantin.cubic.api.chat.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.api.chat.config.ChannelProperties;
-import com.github.dantin.cubic.api.chat.service.MessageService;
+import com.github.dantin.cubic.api.chat.service.ChatService;
 import com.github.dantin.cubic.protocol.chat.ChatMessage;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class RedisListenerHandler extends MessageListenerAdapter {
 
   private final ChannelProperties channelProperties;
 
-  private final MessageService messageService;
+  private final ChatService chatService;
 
   private final RedisTemplate<String, String> redisTemplate;
 
@@ -30,11 +30,11 @@ public class RedisListenerHandler extends MessageListenerAdapter {
 
   public RedisListenerHandler(
       ChannelProperties channelProperties,
-      MessageService messageService,
+      ChatService chatService,
       RedisTemplate<String, String> redisTemplate,
       ObjectMapper objectMapper) {
     this.channelProperties = channelProperties;
-    this.messageService = messageService;
+    this.chatService = chatService;
     this.redisTemplate = redisTemplate;
     this.objectMapper = objectMapper;
   }
@@ -68,9 +68,9 @@ public class RedisListenerHandler extends MessageListenerAdapter {
     if (!Objects.isNull(payload)) {
       if (channelProperties.getBroadcast().equals(topic)) {
         LOGGER.info("sending message to all users");
-        messageService.sendMessage(payload);
+        chatService.sendMessage(payload);
       } else if (channelProperties.getUserStatus().equals(topic)) {
-        messageService.alertUserStatus(payload);
+        chatService.alertUserStatus(payload);
       }
     }
   }

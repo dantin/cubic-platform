@@ -1,6 +1,6 @@
 package com.github.dantin.cubic.api.chat.service.impl;
 
-import com.github.dantin.cubic.api.chat.service.MessageService;
+import com.github.dantin.cubic.api.chat.service.ChatService;
 import com.github.dantin.cubic.protocol.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,14 +9,14 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessageServiceImpl implements MessageService {
+public class ChatServiceImpl implements ChatService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
   private static final String PUBLIC_TOPIC = "/topic/public";
 
   private final SimpMessageSendingOperations simpMessageSendingOperations;
 
-  public MessageServiceImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
+  public ChatServiceImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
     this.simpMessageSendingOperations = simpMessageSendingOperations;
   }
 
