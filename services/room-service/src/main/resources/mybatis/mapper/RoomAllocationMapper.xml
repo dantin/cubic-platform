@@ -6,20 +6,20 @@
     </sql>
 
   <sql id="BASE_COLUMNS">
-        user_id, room_id
+        username, room_id
     </sql>
 
   <resultMap id="roomAllocationMap" type="com.github.dantin.cubic.room.entity.model.RoomAllocation">
     <result property="roomId" column="room_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
-    <result property="userId" column="user_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    <result property="username" column="username" javaType="java.lang.String" jdbcType="VARCHAR"/>
   </resultMap>
 
-  <select id="findByUserId" resultMap="roomAllocationMap">
+  <select id="findByUsername" resultMap="roomAllocationMap">
     SELECT
     <include refid="BASE_COLUMNS"/>
     FROM
     <include refid="BASE_TABLE"/>
     WHERE
-    user_id = #{user_id}
+    username = #{username}
   </select>
 </mapper>

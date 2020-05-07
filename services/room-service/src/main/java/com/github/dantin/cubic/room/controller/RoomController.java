@@ -1,12 +1,12 @@
 package com.github.dantin.cubic.room.controller;
 
+import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.protocol.SearchCriteria;
 import com.github.dantin.cubic.room.entity.model.Room;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
 import com.github.dantin.cubic.room.service.RoomAllocationService;
 import com.github.dantin.cubic.room.service.RoomService;
 import com.github.pagehelper.PageInfo;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -42,17 +42,20 @@ public class RoomController {
     return ResponseEntity.ok(roomsByPage);
   }
 
-  @GetMapping("/{userId}")
-  public ResponseEntity<Room> getRoom(@PathVariable("userId") String userId) {
-    LOGGER.info("get room info for user {}", userId);
+  @GetMapping("/{username}")
+  public ResponseEntity<Room> getRoom(@PathVariable("username") String username) {
+    LOGGER.info("retrieve room information for user '{}'", username);
 
-    RoomAllocation roomAllocation = roomAllocationService.getRoomAllocationByUserId(userId);
-    if (Objects.isNull(roomAllocation)) {
+    try {
+      RoomAllocation roomAllocation = roomAllocationService.getRoomAllocationByUsername(username);
+
+      LOGGER.info("room '{}' is bind to user '{}'", roomAllocation.getRoomId(), username);
+
+      Room room = roomService.getRoomById(roomAllocation.getRoomId());
+      return ResponseEntity.ok(room);
+    } catch (BusinessException e) {
+      LOGGER.warn("fail to retrieve room information", e);
       return ResponseEntity.notFound().build();
     }
-    LOGGER.info("found room {} is bind with user {}", roomAllocation.getRoomId(), userId);
-    Room room = roomService.getRoomById(roomAllocation.getRoomId());
-
-    return ResponseEntity.ok(room);
   }
 }

@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,31 +40,40 @@ public class RoomApplicationMvcTest {
 
   @Autowired private MockMvc mockMvc;
 
-  private RedisServer redisServer;
+  private static RedisServer redisServer;
 
-  @Before
-  public void setUp() {
-    this.redisServer = RedisServer.builder().port(6379).setting("requirepass password").build();
-    this.redisServer.start();
+  @BeforeClass
+  public static void setUp() {
+    redisServer = RedisServer.builder().port(6379).setting("requirepass password").build();
+    redisServer.start();
   }
 
-  @After
-  public void tearDown() {
-    this.redisServer.stop();
+  @AfterClass
+  public static void tearDown() {
+    redisServer.stop();
   }
 
   @Test
-  public void basicCrud() throws Exception {
-    getRoom("11");
-    int size = listRoom(4);
-    assertEquals(size, 4);
-  }
+  public void findNotExistsRoom_thenNotFound() throws Exception {
+    String username = "noExists";
 
-  private void getRoom(String roomId) throws Exception {
     ResultActions result =
         mockMvc
             .perform(
-                get("/rooms/" + roomId)
+                get("/rooms/" + username)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void findExistsRoom_thenOk() throws Exception {
+    String username = "room01";
+
+    ResultActions result =
+        mockMvc
+            .perform(
+                get("/rooms/" + username)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -74,6 +83,15 @@ public class RoomApplicationMvcTest {
     JacksonJsonParser jsonParser = new JacksonJsonParser();
     String name = jsonParser.parseMap(resultString).get("name").toString();
     assertEquals("Room-01", name);
+  }
+
+  @Test
+  public void listRoomByPages_thenOk() throws Exception {
+    int size = listRoom(4);
+    assertEquals(4, size);
+
+    size = listRoom(2);
+    assertEquals(2, size);
   }
 
   private int listRoom(int pageSize) throws Exception {

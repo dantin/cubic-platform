@@ -3,10 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
 
-archivesBaseName = 'ultrasound-service'
-ext {
-    keycloakVersion = '8.0.0'
-}
+archivesBaseName = 'ultrasound-api-service'
 
 dependencyManagement {
     imports {

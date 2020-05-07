@@ -1,32 +1,32 @@
 package com.github.dantin.cubic.api.ultrasound;
 
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.apache.commons.lang3.StringUtils;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JacksonJsonParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class UltrasoundServerIntegrationTest {
@@ -35,13 +35,24 @@ public class UltrasoundServerIntegrationTest {
 
   @Autowired private MockMvc mockMvc;
 
+  @Value("${keycloak.resource}")
+  private String clientId;
+
+  @Value("${keycloak.credentials.secret}")
+  private String clientSecret;
+
+  @Before
+  public void setUp() {
+    mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+  }
+
   @Test
   public void getUserProfile() throws Exception {
-    String accessToken = obtainAccessToken("dummy_user", "password");
+    String accessToken = obtainAccessToken("room01", "password");
     MvcResult result =
         mockMvc
             .perform(
-                get("/user/profile")
+                MockMvcRequestBuilders.request(HttpMethod.GET, "/user/profile")
                     .header(HttpHeaders.AUTHORIZATION, accessToken)
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -50,27 +61,20 @@ public class UltrasoundServerIntegrationTest {
     assertNotNull(resultString);
   }
 
-  private String obtainAccessToken(String username, String password) throws Exception {
+  private String obtainAccessToken(String username, String password) {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "password");
+    params.add("client_id", clientId);
+    params.add("client_secret", clientSecret);
     params.add("username", username);
     params.add("password", password);
 
-    ResultActions result =
-        mockMvc
-            .perform(
-                post("/oauth/token")
-                    .params(params)
-                    .with(httpBasic("dummy_client", "password"))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+    String tokenUrl = "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token";
 
-    String resultString = result.andReturn().getResponse().getContentAsString();
-
-    JacksonJsonParser jsonParser = new JacksonJsonParser();
-    String accessToken = jsonParser.parseMap(resultString).get("access_token").toString();
-    String tokenType = jsonParser.parseMap(resultString).get("token_type").toString();
-    return String.format("%s %s", StringUtils.capitalize(tokenType), accessToken);
+    Response response = RestAssured.given().formParams(params).post(tokenUrl);
+    System.out.println(response.asString());
+    return String.format(
+        "%s %s",
+        response.jsonPath().getString("token_type"), response.jsonPath().getString("access_token"));
   }
 }

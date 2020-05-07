@@ -1,3 +1,5 @@
+truncate table t_room;
+
 INSERT INTO t_room(id, name, create_at) VALUES
 ('1', 'Room-01', '2019-12-23 15:03:31.024'),
 ('2', 'Room-02', '2019-12-23 15:03:31.024'),
@@ -5,13 +7,15 @@ INSERT INTO t_room(id, name, create_at) VALUES
 ('4', 'Room-04', '2019-12-23 15:03:31.024'),
 ('5', 'Room-05', '2019-12-23 15:03:31.024');
 
-INSERT INTO t_room_allocation(user_id, room_id) VALUES
-('11', '1'),
-('12', '2'),
-('13', '3'),
-('14', '4'),
-('15', '5');
+truncate table t_room_allocation;
+INSERT INTO t_room_allocation(username, room_id) VALUES
+('room01', '1'),
+('room02', '2'),
+('room03', '3'),
+('room04', '4'),
+('room05', '5');
 
+truncate table t_stream;
 INSERT INTO t_stream(id, type, role, protocol, host, port, create_at, room_id) VALUES
 ('1',  'DEVICE', 'ADMIN', 'srt', '113.31.109.140', 23012, '2019-12-23 15:03:31.024', '1'),
 ('2',  'CAMERA', 'ADMIN', 'srt', '106.75.216.96',  65102, '2019-12-23 15:03:31.024', '1'),

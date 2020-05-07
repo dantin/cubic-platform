@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS t_room (
 
 -- t_room_allocation
 CREATE TABLE IF NOT EXISTS t_room_allocation (
-    user_id VARCHAR(32) NOT NULL,
+    username VARCHAR(32) NOT NULL,
     room_id VARCHAR(32) NOT NULL,
-    PRIMARY KEY(user_id, room_id)
+    PRIMARY KEY(username, room_id)
 );
 
 -- t_stream
