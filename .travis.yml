@@ -12,6 +12,6 @@ before_script:
   #  - chmod +x docker-compose
   #  - sudo mv docker-compose /usr/local/bin
   - sudo redis-server /etc/redis/redis.conf --requirepass 'password'
-  - psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres
+  - psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres && psql -d oauth2_db -f ./data/db.sql -U postgres
   - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
   - ./gradlew bootJar
