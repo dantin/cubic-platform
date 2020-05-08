@@ -6,12 +6,16 @@ services:
 jdk:
   - openjdk8
 
+before_install:
+  - >
+    psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres
+    psql -d oauth2_db -f ./data/db.sql -U postgres
+  - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
+
 before_script:
   #  - sudo rm /usr/local/bin/docker-compose
   #  - curl -L https://github.com/docker/compose/release/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   #  - chmod +x docker-compose
   #  - sudo mv docker-compose /usr/local/bin
   - sudo redis-server /etc/redis/redis.conf --requirepass 'password'
-  - psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres && psql -d oauth2_db -f ./data/db.sql -U postgres
-  - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
   - ./gradlew bootJar
