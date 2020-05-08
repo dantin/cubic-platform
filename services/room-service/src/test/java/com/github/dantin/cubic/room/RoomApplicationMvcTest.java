@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +40,13 @@ public class RoomApplicationMvcTest {
 
   private static RedisServer redisServer;
 
-  @BeforeClass
+  // @BeforeClass
   public static void setUp() {
     redisServer = RedisServer.builder().port(6379).setting("requirepass password").build();
     redisServer.start();
   }
 
-  @AfterClass
+  // @AfterClass
   public static void tearDown() {
     redisServer.stop();
   }
