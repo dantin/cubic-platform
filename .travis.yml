@@ -17,3 +17,5 @@ before_script:
 #  - sudo mv docker-compose /usr/local/bin
   - docker-compose up -d
   - ./gradlew bootJar
+  - ./wait-for 127.0.0.1:5432 -t 1000 -- echo 'postgres up'
+  - ./wait-for 127.0.0.1:6379 -t 1000 -- echo 'redis up'
