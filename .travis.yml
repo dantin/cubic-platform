@@ -20,4 +20,4 @@ before_script:
   - sudo redis-server /etc/redis/redis.conf --requirepass 'password'
   - >
     ./gradlew bootJar &&
-    java -Dspring.datasource.password="" -jar services/oauth2-service/build/libs/oauth2-service-0.0.1-SNAPSHOT.jar
+    java -Dspring.datasource.password="" -jar services/oauth2-service/build/libs/oauth2-service-0.0.1-SNAPSHOT.jar &
