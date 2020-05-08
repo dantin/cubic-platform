@@ -18,4 +18,6 @@ before_script:
   #  - chmod +x docker-compose
   #  - sudo mv docker-compose /usr/local/bin
   - sudo redis-server /etc/redis/redis.conf --requirepass 'password'
-  - ./gradlew bootJar
+  - >
+    ./gradlew bootJar &&
+    java -Dspring.datasource.password="" -jar services/oauth2-service/build/libs/oauth2-service-0.0.1-SNAPSHOT.jar
