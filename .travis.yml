@@ -1,6 +1,16 @@
 language: java
 
+services:
+  - postgresql
+
 jdk:
   - openjdk8
 
-before_script: sudo redis-server /etc/redis/redis.conf --requirepass 'password'
+before_install:
+  - >
+    psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres &&
+    psql -d oauth2_db -f ./data/db.sql -U postgres
+  - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
+
+before_script:
+  - sudo redis-server /etc/redis/redis.conf --requirepass 'password'

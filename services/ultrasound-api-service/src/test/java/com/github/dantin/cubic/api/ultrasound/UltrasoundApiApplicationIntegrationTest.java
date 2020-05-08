@@ -4,10 +4,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import com.tngtech.keycloakmock.api.KeycloakVerificationMock;
+import com.tngtech.keycloakmock.api.TokenConfig;
+import java.time.Instant;
+import java.util.Objects;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +26,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Ignore
-public class UltrasoundServerIntegrationTest {
+public class UltrasoundApiApplicationIntegrationTest {
 
   @Autowired private WebApplicationContext context;
 
@@ -43,14 +43,30 @@ public class UltrasoundServerIntegrationTest {
   @Value("${keycloak.credentials.secret}")
   private String clientSecret;
 
+  private static KeycloakVerificationMock keycloakMock;
+
+  @BeforeClass
+  public static void prepare() {
+    keycloakMock = new KeycloakVerificationMock(8083, "ultrasound");
+    keycloakMock.start();
+  }
+
+  @AfterClass
+  public static void tearDown() {
+    if (!Objects.isNull(keycloakMock)) {
+      keycloakMock.stop();
+    }
+  }
+
   @Before
   public void setUp() {
+    // .alwaysDo(print())
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
   }
 
   @Test
   public void getUserProfile() throws Exception {
-    String accessToken = obtainAccessToken("room01", "password");
+    String accessToken = obtainMockAccessToken("room01");
     MvcResult result =
         mockMvc
             .perform(
@@ -63,20 +79,19 @@ public class UltrasoundServerIntegrationTest {
     assertNotNull(resultString);
   }
 
-  private String obtainAccessToken(String username, String password) {
-    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-    params.add("grant_type", "password");
-    params.add("client_id", clientId);
-    params.add("client_secret", clientSecret);
-    params.add("username", username);
-    params.add("password", password);
+  private String obtainMockAccessToken(String username) {
+    Instant now = Instant.now();
+    int i = (int) (now.getEpochSecond() / 1000);
 
-    String tokenUrl = "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token";
+    String accessToken =
+        keycloakMock.getAccessToken(
+            TokenConfig.aTokenConfig()
+                .withAuthenticationTime(Instant.ofEpochSecond(i))
+                .withPreferredUsername(username)
+                .withRealmRole("app_user")
+                .withResourceRole("ultrasound_api_service", "ultrasound-user")
+                .build());
 
-    Response response = RestAssured.given().formParams(params).post(tokenUrl);
-    System.out.println(response.asString());
-    return String.format(
-        "%s %s",
-        response.jsonPath().getString("token_type"), response.jsonPath().getString("access_token"));
+    return String.format("Bearer %s", accessToken);
   }
 }

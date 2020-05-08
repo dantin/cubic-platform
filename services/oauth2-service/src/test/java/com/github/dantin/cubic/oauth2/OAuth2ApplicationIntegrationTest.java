@@ -12,12 +12,12 @@ import org.springframework.util.MultiValueMap;
 
 // need oauth2-service to be running.
 @Ignore
-public class OAuthIntegrationTest {
+public class OAuth2ApplicationIntegrationTest {
 
   @Test
   public void whenServiceStartsAndLoadsRealmConfiguration_thenOidcDiscoveryEndpointIsAvailable() {
     String oidcDiscoveryUrl =
-        "http://localhost:8083/auth/realms/cubic/.well-known/openid-configuration";
+        "http://localhost:8083/auth/realms/ultrasound/.well-known/openid-configuration";
 
     Response response = RestAssured.given().redirects().follow(false).get(oidcDiscoveryUrl);
 
@@ -34,17 +34,12 @@ public class OAuthIntegrationTest {
   }
 
   private String obtainAccessToken() {
-    // curl -L -X POST 'http://localhost:8083/auth/realms/cubic/protocol/openid-connect/token' -H
-    // 'Content-Type: application/x-www-form-urlencoded' --data-urlencode
-    // 'client_id=ultrasound_api_client' --data-urlencode 'grant_type=password' --data-urlencode
-    // 'client_secret=password' --data-urlencode 'scope=read' --data-urlencode
-    // 'username=john@test.com' --data-urlencode 'password=123' | jq
-    String tokenUrl = "http://localhost:8083/auth/realms/cubic/protocol/openid-connect/token";
+    String tokenUrl = "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token";
     // obtain authentication url with custom code
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("client_id", "ultrasound_api_service");
     params.add("grant_type", "password");
-    params.add("client_secret", "password");
+    params.add("client_secret", "3d973f0c-d0ed-43b9-8c13-67f5ea73e335");
     params.add("scope", "read");
     params.add("username", "room01");
     params.add("password", "password");

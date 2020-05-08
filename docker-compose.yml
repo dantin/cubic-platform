@@ -25,11 +25,3 @@ services:
       - "6379:6379"
     environment:
       - TZ=Asia/Shanghai
-#  uaa:
-#    image: apm/uaa:latest
-#    volumes:
-#      - "/etc/localtime:/etc/localtime:ro"
-#    ports:
-#      - "8090:8090"
-#    environment:
-#      - TZ=Asia/Shanghai

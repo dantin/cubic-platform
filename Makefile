@@ -8,7 +8,7 @@ fmt:
 
 .PHONY: test
 test: vet
-	@./gradlew test
+	@./gradlew check
 
 .PHONY: jar
 jar:
