@@ -1,0 +1,7 @@
+
+dependencies {
+    compile project(":shared:common-base")
+    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotationsVersion}")
+
+    testCompile("junit:junit:${junitVersion}")
+}
