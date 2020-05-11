@@ -40,7 +40,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    value = {"eureka.client.enabled:false"},
+    webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class UltrasoundApiMvcTest {
 

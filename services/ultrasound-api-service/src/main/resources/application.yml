@@ -15,7 +15,15 @@ keycloak:
 
 spring:
   application:
-    name: ultrasound-api
+    name: ultrasound-api-service
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 15
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
 
 logging:
   level:
