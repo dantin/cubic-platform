@@ -28,3 +28,4 @@ eureka:
 logging:
   level:
     ROOT: info
+    com.github.dantin: debug

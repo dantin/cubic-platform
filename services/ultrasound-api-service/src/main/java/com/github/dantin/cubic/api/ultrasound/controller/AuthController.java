@@ -51,7 +51,7 @@ public class AuthController {
     params.add("client_id", clientId);
     params.add("grant_type", "password");
     params.add("client_secret", clientSecret);
-    params.add("scope", "openid");
+    params.add("scope", "password");
     params.add("username", request.getUsername());
     params.add("password", request.getPassword());
 

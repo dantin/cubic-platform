@@ -41,6 +41,7 @@ subprojects {
         jacksonAnnotationsVersion = '2.10.1'
 
         keycloakVersion = '8.0.0'
+        keycloakMockVersion = '0.3.0'
     }
 
     repositories {
