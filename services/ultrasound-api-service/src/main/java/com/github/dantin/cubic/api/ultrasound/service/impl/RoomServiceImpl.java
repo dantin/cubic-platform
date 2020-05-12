@@ -13,9 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -33,13 +32,14 @@ public class RoomServiceImpl implements RoomService {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     HttpEntity<String> entity = new HttpEntity<>(headers);
-    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-    params.add("page_number", String.valueOf(pageNumber));
-    params.add("page_size", String.valueOf(pageSize));
+    UriComponentsBuilder uriBuilder =
+        UriComponentsBuilder.fromHttpUrl("http://room-service/rooms")
+            .queryParam("page_number", pageNumber)
+            .queryParam("page_size", pageSize);
 
     ResponseEntity<Pagination<Route>> routes =
         restTemplate.exchange(
-            "http://room-service/rooms",
+            uriBuilder.toUriString(),
             HttpMethod.GET,
             entity,
             new ParameterizedTypeReference<Pagination<Route>>() {});

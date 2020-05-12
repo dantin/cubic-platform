@@ -48,6 +48,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -128,7 +129,7 @@ public class UltrasoundApiMvcTest {
   public void listRoomByPage_thenSuccess() throws Exception {
     String accessToken = obtainMockAccessToken("admin", "ultrasound-admin");
     listRoomByPage(accessToken, 1, 8, 10);
-    // listRoomByPage(accessToken, 2, 4, 4);
+    listRoomByPage(accessToken, 2, 4, 4);
   }
 
   private void listRoomByPage(String accessToken, int page, int size, int pages) throws Exception {
@@ -167,12 +168,16 @@ public class UltrasoundApiMvcTest {
 
     Mockito.when(roomServiceMock.listRoomByPage(page, size)).thenReturn(builder.build());
 
+    LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("n", String.valueOf(page));
+    params.add("s", String.valueOf(size));
     MvcResult result =
         mockMvc
             .perform(
                 MockMvcRequestBuilders.request(HttpMethod.GET, "/room/list")
                     .header(HttpHeaders.AUTHORIZATION, accessToken)
-                    .accept(MediaType.APPLICATION_JSON))
+                    .accept(MediaType.APPLICATION_JSON)
+                    .params(params))
             .andExpect(status().isOk())
             .andReturn();
     String jsonString = result.getResponse().getContentAsString();
