@@ -1,16 +1,18 @@
 package com.github.dantin.cubic.protocol;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
-public final class ProtocolTest {
+public final class MarshalTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   @Test
@@ -36,5 +38,9 @@ public final class ProtocolTest {
 
     assertNotNull(actual);
     assertThat(actual.getPages(), is(10));
+    assertThat(actual.getPage(), is(1));
+    assertThat(actual.getSize(), is(1));
+    assertFalse(actual.isHasPrevious());
+    assertTrue(actual.isHasNext());
   }
 }

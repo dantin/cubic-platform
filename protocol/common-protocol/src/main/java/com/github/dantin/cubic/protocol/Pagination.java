@@ -38,6 +38,17 @@ public class Pagination<T> {
     return new Builder<>();
   }
 
+  public static <T> Builder<T> copyOf(Pagination<T> o) {
+    Builder<T> builder = new Builder<>();
+    builder.size = o.size;
+    builder.pages = o.pages;
+    builder.page = o.page;
+    builder.total = o.total;
+    builder.hasPrevious = o.hasPrevious;
+    builder.hasNext = o.hasNext;
+    return builder;
+  }
+
   @JsonGetter("pages")
   public int getPages() {
     return pages;

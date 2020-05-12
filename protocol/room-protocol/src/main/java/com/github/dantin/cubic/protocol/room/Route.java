@@ -1,17 +1,21 @@
 package com.github.dantin.cubic.protocol.room;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@JsonDeserialize(builder = Route.Builder.class)
 public class Route {
 
   private final String id;
   private final String name;
   private final List<Stream> streams;
 
-  Route(Builder builder) {
+  private Route(Builder builder) {
     this.id = builder.id;
     this.name = builder.name;
     this.streams = builder.streams;
@@ -19,6 +23,13 @@ public class Route {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  public static Builder copyOf(Route o) {
+    Builder builder = new Builder();
+    builder.id = o.id;
+    builder.name = o.name;
+    return builder;
   }
 
   @JsonGetter("id")
@@ -36,6 +47,7 @@ public class Route {
     return streams;
   }
 
+  @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
   public static final class Builder implements com.github.dantin.cubic.base.Builder<Route> {
     private String id;
     private String name;
@@ -45,16 +57,19 @@ public class Route {
       this.streams = new ArrayList<>();
     }
 
+    @JsonSetter("id")
     public Builder id(String id) {
       this.id = id;
       return this;
     }
 
+    @JsonSetter("room")
     public Builder name(String name) {
       this.name = name;
       return this;
     }
 
+    @JsonSetter("streams")
     public Builder streams(List<Stream> streams) {
       this.streams = streams;
       return this;

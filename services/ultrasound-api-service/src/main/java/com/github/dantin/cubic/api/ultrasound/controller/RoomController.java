@@ -3,6 +3,7 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.protocol.Pagination;
+import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,23 @@ public class RoomController extends BaseController {
 
     try {
       Pagination<Route> rooms = roomService.listRoomByPage(number, size);
-      return ResponseEntity.ok(rooms);
+      Pagination.Builder<Route> builder = Pagination.copyOf(rooms);
+      rooms
+          .getItems()
+          .forEach(
+              route -> {
+                Route.Builder actual = Route.copyOf(route);
+                route
+                    .getStreams()
+                    .forEach(
+                        stream -> {
+                          if (Role.from(stream.getRole()) == Role.ADMIN) {
+                            actual.addStream(stream);
+                          }
+                        });
+                builder.addItem(actual.build());
+              });
+      return ResponseEntity.ok(builder.build());
     } catch (BusinessException e) {
       LOGGER.warn("list room by page failed", e);
       return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();

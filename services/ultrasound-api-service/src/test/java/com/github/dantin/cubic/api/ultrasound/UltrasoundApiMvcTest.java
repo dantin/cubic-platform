@@ -1,23 +1,30 @@
 package com.github.dantin.cubic.api.ultrasound;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.protocol.Pagination;
+import com.github.dantin.cubic.protocol.room.Device;
+import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
 import com.tngtech.keycloakmock.api.KeycloakVerificationMock;
 import com.tngtech.keycloakmock.api.TokenConfig;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,7 +60,7 @@ public class UltrasoundApiMvcTest {
 
   private static KeycloakVerificationMock keycloakMock;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper MAPPER = new ObjectMapper();
 
   private MockRestServiceServer mockAuthServer;
 
@@ -118,10 +125,47 @@ public class UltrasoundApiMvcTest {
   }
 
   @Test
-  public void listRoom() throws Exception {
+  public void listRoomByPage_thenSuccess() throws Exception {
     String accessToken = obtainMockAccessToken("admin", "ultrasound-admin");
-    Mockito.when(roomServiceMock.listRoomByPage(1, 8))
-        .thenReturn(Pagination.<Route>builder().page(1).pages(8).build());
+    listRoomByPage(accessToken, 1, 8, 10);
+    // listRoomByPage(accessToken, 2, 4, 4);
+  }
+
+  private void listRoomByPage(String accessToken, int page, int size, int pages) throws Exception {
+    // mock data
+    Pagination.Builder<Route> builder = Pagination.builder();
+    builder.pages(pages).page(page).size(size);
+    for (int i = 0; i < size; i++) {
+      int id = page * size + i;
+      Route.Builder route = Route.builder().id(String.valueOf(id)).name("route " + id);
+      route.addStream(
+          Stream.builder()
+              .role(Role.ADMIN.getAlias())
+              .type(Device.CAMERA.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.ADMIN.getAlias())
+              .type(Device.DEVICE.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.USER.getAlias())
+              .type(Device.CAMERA.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.USER.getAlias())
+              .type(Device.DEVICE.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      builder.addItem(route.build());
+    }
+
+    Mockito.when(roomServiceMock.listRoomByPage(page, size)).thenReturn(builder.build());
 
     MvcResult result =
         mockMvc
@@ -131,12 +175,18 @@ public class UltrasoundApiMvcTest {
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
-    String resultString = result.getResponse().getContentAsString();
-    assertNotNull(resultString);
+    String jsonString = result.getResponse().getContentAsString();
+    assertNotNull(jsonString);
+
+    Pagination<Route> routesByPage =
+        MAPPER.readValue(jsonString, new TypeReference<Pagination<Route>>() {});
+    assertThat(routesByPage.getPages(), is(pages));
+    assertThat(routesByPage.getPage(), is(page));
+    assertThat(routesByPage.getSize(), is(size));
   }
 
   @Test
-  public void getUserProfile() throws Exception {
+  public void getUserProfile_thenSuccess() throws Exception {
     String accessToken = obtainMockAccessToken("room01", "ultrasound-user");
     MvcResult result =
         mockMvc
@@ -152,7 +202,7 @@ public class UltrasoundApiMvcTest {
 
   private String asJsonString(final Object obj) {
     try {
-      return objectMapper.writeValueAsString(obj);
+      return MAPPER.writeValueAsString(obj);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
