@@ -4,6 +4,7 @@ import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +39,7 @@ public class AuthController {
 
   private final RestTemplate restTemplate;
 
-  public AuthController(RestTemplate restTemplate) {
+  public AuthController(@Qualifier("outerRest") RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
   }
 

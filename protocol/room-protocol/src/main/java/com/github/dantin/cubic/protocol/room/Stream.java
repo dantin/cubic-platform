@@ -27,6 +27,11 @@ public class Stream {
     return uri;
   }
 
+  @JsonGetter("role")
+  public String getRole() {
+    return role;
+  }
+
   public static final class Builder implements com.github.dantin.cubic.base.Builder<Stream> {
     private String type;
     private String uri;

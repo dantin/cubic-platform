@@ -6,6 +6,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +30,8 @@ public class RoomController extends BaseController {
 
   private final RestTemplate restTemplate;
 
-  public RoomController(RestTemplate restTemplate, HttpServletRequest request) {
+  public RoomController(
+      @Qualifier("cloudRest") RestTemplate restTemplate, HttpServletRequest request) {
     super(request);
     this.restTemplate = restTemplate;
   }
