@@ -49,8 +49,8 @@ public class UltrasoundApiMvcTest {
 
   private static KeycloakVerificationMock keycloakMock;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
-  private MockRestServiceServer mockServer;
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  private MockRestServiceServer mockAuthServer;
 
   @Autowired private WebApplicationContext context;
 
@@ -58,7 +58,7 @@ public class UltrasoundApiMvcTest {
 
   @Qualifier("edgeClient")
   @Autowired
-  private RestTemplate restTemplate;
+  private RestTemplate edgeClient;
 
   @Value("${keycloak.resource}")
   private String clientId;
@@ -81,14 +81,15 @@ public class UltrasoundApiMvcTest {
 
   @Before
   public void init() {
-    mockServer = MockRestServiceServer.createServer(restTemplate);
+    mockAuthServer = MockRestServiceServer.createServer(edgeClient);
     // .alwaysDo(print())
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
   }
 
   @Test
   public void doLogin_thenSuccess() throws Exception {
-    mockServer
+    final String mockResponseBody = "success";
+    mockAuthServer
         .expect(
             ExpectedCount.once(),
             requestTo(
@@ -96,7 +97,9 @@ public class UltrasoundApiMvcTest {
                     "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token")))
         .andExpect(method(HttpMethod.POST))
         .andRespond(
-            withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("success"));
+            withStatus(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(mockResponseBody));
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setUsername("room01");
     loginRequest.setPassword("password");
@@ -110,7 +113,7 @@ public class UltrasoundApiMvcTest {
             .andExpect(status().isOk())
             .andReturn();
     String resultString = result.getResponse().getContentAsString();
-    assertEquals("success", resultString);
+    assertEquals(mockResponseBody, resultString);
   }
 
   @Test
