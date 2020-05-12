@@ -6,6 +6,7 @@ include 'shared:uid-autoconfigure'
 
 include 'protocol:common-protocol'
 include 'protocol:chat-protocol'
+include 'protocol:room-protocol'
 include 'protocol:ultrasound-protocol'
 
 include 'services:discovery-service'

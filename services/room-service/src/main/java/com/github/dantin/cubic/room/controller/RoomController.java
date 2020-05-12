@@ -1,7 +1,10 @@
 package com.github.dantin.cubic.room.controller;
 
 import com.github.dantin.cubic.base.exception.BusinessException;
+import com.github.dantin.cubic.protocol.Pagination;
 import com.github.dantin.cubic.protocol.SearchCriteria;
+import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.room.entity.model.Room;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
 import com.github.dantin.cubic.room.service.RoomAllocationService;
@@ -31,15 +34,25 @@ public class RoomController {
   }
 
   @GetMapping
-  public ResponseEntity<PageInfo<Room>> listRooms(
+  public ResponseEntity<Pagination<Route>> listRooms(
       @RequestParam(value = "n", defaultValue = "1", required = false) int number,
       @RequestParam(value = "s", defaultValue = "8", required = false) int size) {
-    LOGGER.info("list route, page number {}, size {}", number, size);
+    LOGGER.info("list room by page, page number {}, size {}", number, size);
 
     PageInfo<Room> roomsByPage =
         roomService.listRooms(SearchCriteria.builder().pageNumber(number).pageSize(size).build());
 
-    return ResponseEntity.ok(roomsByPage);
+    LOGGER.info("build room pagination");
+    Pagination.Builder<Route> builder =
+        Pagination.<Route>builder()
+            .pages(roomsByPage.getPages())
+            .page(roomsByPage.getPageNum())
+            .total(roomsByPage.getTotal())
+            .hasPrevious(roomsByPage.isHasPreviousPage())
+            .hasNext(roomsByPage.isHasNextPage());
+
+    roomsByPage.getList().forEach(room -> builder.addItem(buildRoute(room)));
+    return ResponseEntity.ok(builder.build());
   }
 
   @GetMapping("/{username}")
@@ -57,5 +70,15 @@ public class RoomController {
       LOGGER.warn("fail to retrieve room information", e);
       return ResponseEntity.notFound().build();
     }
+  }
+
+  private Route buildRoute(Room room) {
+    Route.Builder builder = Route.builder().id(room.getId()).name(room.getName());
+    room.getStreams()
+        .forEach(
+            x ->
+                builder.addStream(
+                    Stream.builder().type(x.getType()).uri(x.getUri()).role(x.getRole()).build()));
+    return builder.build();
   }
 }

@@ -1,30 +1,42 @@
 package com.github.dantin.cubic.api.ultrasound;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dantin.cubic.api.ultrasound.service.RoomService;
+import com.github.dantin.cubic.protocol.Pagination;
+import com.github.dantin.cubic.protocol.room.Device;
+import com.github.dantin.cubic.protocol.room.Role;
+import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
 import com.tngtech.keycloakmock.api.KeycloakVerificationMock;
 import com.tngtech.keycloakmock.api.TokenConfig;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -40,29 +52,30 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    value = {"eureka.client.enabled:false"},
+    webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class UltrasoundApiMvcTest {
 
   private static KeycloakVerificationMock keycloakMock;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
-  private MockRestServiceServer mockServer;
+  private final ObjectMapper MAPPER = new ObjectMapper();
+
+  private MockRestServiceServer mockAuthServer;
 
   @Autowired private WebApplicationContext context;
 
   @Autowired private MockMvc mockMvc;
 
-  @Autowired private RestTemplate restTemplate;
+  @Qualifier("edgeClient")
+  @Autowired
+  private RestTemplate edgeClient;
 
-  @Value("${keycloak.resource}")
-  private String clientId;
-
-  @Value("${keycloak.credentials.secret}")
-  private String clientSecret;
+  @MockBean private RoomService roomServiceMock;
 
   @BeforeClass
-  public static void prepare() {
+  public static void setUp() {
     keycloakMock = new KeycloakVerificationMock(8083, "ultrasound");
     keycloakMock.start();
   }
@@ -76,18 +89,15 @@ public class UltrasoundApiMvcTest {
 
   @Before
   public void init() {
-    mockServer = MockRestServiceServer.createServer(restTemplate);
-  }
-
-  @Before
-  public void setUp() {
+    mockAuthServer = MockRestServiceServer.createServer(edgeClient);
     // .alwaysDo(print())
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
   }
 
   @Test
   public void doLogin_thenSuccess() throws Exception {
-    mockServer
+    final String mockResponseBody = "success";
+    mockAuthServer
         .expect(
             ExpectedCount.once(),
             requestTo(
@@ -95,7 +105,9 @@ public class UltrasoundApiMvcTest {
                     "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token")))
         .andExpect(method(HttpMethod.POST))
         .andRespond(
-            withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("success"));
+            withStatus(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(mockResponseBody));
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setUsername("room01");
     loginRequest.setPassword("password");
@@ -109,12 +121,73 @@ public class UltrasoundApiMvcTest {
             .andExpect(status().isOk())
             .andReturn();
     String resultString = result.getResponse().getContentAsString();
-    assertEquals("success", resultString);
+    assertEquals(mockResponseBody, resultString);
   }
 
   @Test
-  public void getUserProfile() throws Exception {
-    String accessToken = obtainMockAccessToken("room01");
+  public void listRoomByPage_thenSuccess() throws Exception {
+    String accessToken = obtainMockAccessToken("admin", "ultrasound-admin");
+    listRoomByPage(accessToken, 1, 8, 10);
+    // listRoomByPage(accessToken, 2, 4, 4);
+  }
+
+  private void listRoomByPage(String accessToken, int page, int size, int pages) throws Exception {
+    // mock data
+    Pagination.Builder<Route> builder = Pagination.builder();
+    builder.pages(pages).page(page).size(size);
+    for (int i = 0; i < size; i++) {
+      int id = page * size + i;
+      Route.Builder route = Route.builder().id(String.valueOf(id)).name("route " + id);
+      route.addStream(
+          Stream.builder()
+              .role(Role.ADMIN.getAlias())
+              .type(Device.CAMERA.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.ADMIN.getAlias())
+              .type(Device.DEVICE.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.USER.getAlias())
+              .type(Device.CAMERA.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      route.addStream(
+          Stream.builder()
+              .role(Role.USER.getAlias())
+              .type(Device.DEVICE.getAlias())
+              .uri("srt::" + UUID.randomUUID().toString())
+              .build());
+      builder.addItem(route.build());
+    }
+
+    Mockito.when(roomServiceMock.listRoomByPage(page, size)).thenReturn(builder.build());
+
+    MvcResult result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.request(HttpMethod.GET, "/room/list")
+                    .header(HttpHeaders.AUTHORIZATION, accessToken)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    String jsonString = result.getResponse().getContentAsString();
+    assertNotNull(jsonString);
+
+    Pagination<Route> routesByPage =
+        MAPPER.readValue(jsonString, new TypeReference<Pagination<Route>>() {});
+    assertThat(routesByPage.getPages(), is(pages));
+    assertThat(routesByPage.getPage(), is(page));
+    assertThat(routesByPage.getSize(), is(size));
+  }
+
+  @Test
+  public void getUserProfile_thenSuccess() throws Exception {
+    String accessToken = obtainMockAccessToken("room01", "ultrasound-user");
     MvcResult result =
         mockMvc
             .perform(
@@ -129,13 +202,13 @@ public class UltrasoundApiMvcTest {
 
   private String asJsonString(final Object obj) {
     try {
-      return objectMapper.writeValueAsString(obj);
+      return MAPPER.writeValueAsString(obj);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  private String obtainMockAccessToken(String username) {
+  private String obtainMockAccessToken(String username, String role) {
     Instant now = Instant.now();
     int i = (int) (now.getEpochSecond() / 1000);
 
@@ -145,7 +218,7 @@ public class UltrasoundApiMvcTest {
                 .withAuthenticationTime(Instant.ofEpochSecond(i))
                 .withPreferredUsername(username)
                 .withRealmRole("app_user")
-                .withResourceRole("ultrasound_api_service", "ultrasound-user")
+                .withResourceRole("ultrasound_api_service", role)
                 .build());
 
     return String.format("Bearer %s", accessToken);
