@@ -39,7 +39,7 @@ public class AuthController {
 
   private final RestTemplate restTemplate;
 
-  public AuthController(@Qualifier("outerRest") RestTemplate restTemplate) {
+  public AuthController(@Qualifier("edgeClient") RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
   }
 

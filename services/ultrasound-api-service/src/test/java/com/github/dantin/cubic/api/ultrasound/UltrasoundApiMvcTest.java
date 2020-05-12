@@ -56,7 +56,7 @@ public class UltrasoundApiMvcTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @Qualifier("outerRest")
+  @Qualifier("edgeClient")
   @Autowired
   private RestTemplate restTemplate;
 
@@ -67,7 +67,7 @@ public class UltrasoundApiMvcTest {
   private String clientSecret;
 
   @BeforeClass
-  public static void prepare() {
+  public static void setUp() {
     keycloakMock = new KeycloakVerificationMock(8083, "ultrasound");
     keycloakMock.start();
   }
@@ -82,10 +82,6 @@ public class UltrasoundApiMvcTest {
   @Before
   public void init() {
     mockServer = MockRestServiceServer.createServer(restTemplate);
-  }
-
-  @Before
-  public void setUp() {
     // .alwaysDo(print())
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
   }

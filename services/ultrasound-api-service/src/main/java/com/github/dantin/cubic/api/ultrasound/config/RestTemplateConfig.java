@@ -8,14 +8,14 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-  @Bean(name = "cloudRest")
+  @Bean(name = "clusterClient")
   @LoadBalanced
-  public RestTemplate restTemplate() {
+  public RestTemplate clusterClient() {
     return new RestTemplate();
   }
 
-  @Bean(name = "outerRest")
-  public RestTemplate restTemplate2() {
+  @Bean(name = "edgeClient")
+  public RestTemplate edgeClient() {
     return new RestTemplate();
   }
 }

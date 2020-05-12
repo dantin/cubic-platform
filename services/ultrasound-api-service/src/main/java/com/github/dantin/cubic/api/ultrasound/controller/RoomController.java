@@ -31,7 +31,7 @@ public class RoomController extends BaseController {
   private final RestTemplate restTemplate;
 
   public RoomController(
-      @Qualifier("cloudRest") RestTemplate restTemplate, HttpServletRequest request) {
+      @Qualifier("clusterClient") RestTemplate restTemplate, HttpServletRequest request) {
     super(request);
     this.restTemplate = restTemplate;
   }
