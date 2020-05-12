@@ -25,10 +25,12 @@ public class BaseController {
   protected String getUsername() {
     KeycloakSecurityContext context = getKeycloakSecurityContext();
     if (Objects.isNull(context) || Objects.isNull(context.getToken())) {
+      LOGGER.warn("no security context or token found");
       throw new BusinessException("username not set");
     }
     String username = context.getToken().getPreferredUsername();
     if (Strings.isNullOrEmpty(username)) {
+      LOGGER.warn("username not found in token");
       throw new BusinessException("username null or empty");
     }
     return username;
