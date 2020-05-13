@@ -56,7 +56,7 @@ public class RoomController {
   }
 
   @GetMapping("/{username}")
-  public ResponseEntity<Room> getRoom(@PathVariable("username") String username) {
+  public ResponseEntity<Route> getRoom(@PathVariable("username") String username) {
     LOGGER.info("retrieve room information for user '{}'", username);
 
     try {
@@ -65,7 +65,9 @@ public class RoomController {
       LOGGER.info("room '{}' is bind to user '{}'", roomAllocation.getRoomId(), username);
 
       Room room = roomService.getRoomById(roomAllocation.getRoomId());
-      return ResponseEntity.ok(room);
+
+      LOGGER.info("build room");
+      return ResponseEntity.ok(buildRoute(room));
     } catch (BusinessException e) {
       LOGGER.warn("fail to retrieve room information", e);
       return ResponseEntity.notFound().build();
