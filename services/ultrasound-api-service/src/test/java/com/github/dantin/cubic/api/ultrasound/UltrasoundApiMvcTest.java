@@ -185,10 +185,10 @@ public class UltrasoundApiMvcTest {
     RoutePage routesByPage = MAPPER.readValue(jsonString, RoutePage.class);
     assertThat(routesByPage.getPages(), is(pages));
     assertThat(routesByPage.getPage(), is(page));
-    assertThat(routesByPage.getSize(), is(size));
-
+    assertThat(routesByPage.getRoutes().size(), is(size));
     for (Route route : routesByPage.getRoutes()) {
-      System.out.println(route);
+      assertNotNull(route);
+      assertEquals(2, route.getStreams().size());
     }
   }
 

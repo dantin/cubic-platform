@@ -69,6 +69,17 @@ public abstract class Pagination {
       this.mInstance = (T) this;
     }
 
+    public T copyOf(Pagination src) {
+      this.pages = src.pages;
+      this.page = src.page;
+      this.size = src.size;
+      this.total = src.total;
+      this.hasPrevious = src.hasPrevious;
+      this.hasNext = src.hasNext;
+
+      return mInstance;
+    }
+
     @JsonSetter("pages")
     public T pages(int pages) {
       this.pages = pages;

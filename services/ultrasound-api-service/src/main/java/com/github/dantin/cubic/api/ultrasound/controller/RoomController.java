@@ -2,7 +2,10 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.base.exception.BusinessException;
+import com.github.dantin.cubic.protocol.room.Role;
+import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
+import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -36,26 +39,24 @@ public class RoomController extends BaseController {
     LOGGER.info("list room by page triggered by '{}'", username);
 
     try {
-      RoutePage rooms = roomService.listRoomByPage(number, size);
-      /*
-      Pagination.Builder<Route> builder = Pagination.copyOf(rooms);
-      rooms
-          .getItems()
+      RoutePage orig = roomService.listRoomByPage(number, size);
+      RoutePage.Builder builder = RoutePage.builder().copyOf(orig);
+      orig.getRoutes()
           .forEach(
               route -> {
-                Route.Builder actual = Route.copyOf(route);
-                route
-                    .getStreams()
-                    .forEach(
-                        stream -> {
-                          if (Role.from(stream.getRole()) == Role.ADMIN) {
-                            actual.addStream(stream);
-                          }
-                        });
-                builder.addItem(actual.build());
+                builder.addRoute(
+                    Route.builder()
+                        .name(route.getName())
+                        .id(route.getId())
+                        .streams(
+                            route
+                                .getStreams()
+                                .stream()
+                                .filter(s -> Role.from(s.getRole()) == Role.ADMIN)
+                                .collect(Collectors.toList()))
+                        .build());
               });
-       */
-      return ResponseEntity.ok(rooms);
+      return ResponseEntity.ok(builder.build());
     } catch (BusinessException e) {
       LOGGER.warn("list room by page failed", e);
       return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
