@@ -125,6 +125,59 @@ public class UltrasoundApiMvcTest {
   }
 
   @Test
+  public void getRoom_thenSuccess() throws Exception {
+    final String username = "room01";
+    String accessToken = obtainMockAccessToken(username, "ultrasound-user");
+
+    // mock data
+    Route.Builder builder = Route.builder().id(String.valueOf("1")).name("route 1");
+    builder.addStream(
+        Stream.builder()
+            .role(Role.ADMIN.getAlias())
+            .type(Device.CAMERA.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .role(Role.ADMIN.getAlias())
+            .type(Device.DEVICE.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .role(Role.USER.getAlias())
+            .type(Device.CAMERA.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .role(Role.USER.getAlias())
+            .type(Device.DEVICE.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+
+    Route orig = builder.build();
+    Mockito.when(roomServiceMock.getRoom(username)).thenReturn(orig);
+
+    MvcResult result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.request(HttpMethod.GET, "/room")
+                    .header(HttpHeaders.AUTHORIZATION, accessToken)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn();
+    String jsonString = result.getResponse().getContentAsString();
+    assertNotNull(jsonString);
+
+    Route route = MAPPER.readValue(jsonString, Route.class);
+    assertNotNull(route);
+    assertThat(route.getId(), is(orig.getId()));
+    assertThat(route.getName(), is(orig.getName()));
+    assertEquals(2, route.getStreams().size());
+  }
+
+  @Test
   public void listRoomByPage_thenSuccess() throws Exception {
     String accessToken = obtainMockAccessToken("admin", "ultrasound-admin");
     listRoomByPage(accessToken, 1, 8, 10);

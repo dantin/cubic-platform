@@ -1,6 +1,7 @@
 package com.github.dantin.cubic.api.ultrasound.service.impl;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
+import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +36,29 @@ public class RoomServiceImpl implements RoomService {
             .queryParam("page_number", pageNumber)
             .queryParam("page_size", pageSize);
 
-    ResponseEntity<RoutePage> routes =
+    ResponseEntity<RoutePage> response =
         restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, entity, RoutePage.class);
-    if (!routes.getStatusCode().is2xxSuccessful()) {
-      throw new RuntimeException("fail to invoke room-service");
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      throw new RuntimeException("fail to list room by invoking room-service");
     }
 
-    return routes.getBody();
+    return response.getBody();
+  }
+
+  @Override
+  public Route getRoom(String username) {
+    LOGGER.info("load room by user '{}'", username);
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+    String url = String.format("http://room-service/rooms/%s", username);
+
+    ResponseEntity<Route> response =
+        restTemplate.exchange(url, HttpMethod.GET, entity, Route.class);
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      throw new RuntimeException("fail to load room by invoking room-service");
+    }
+
+    return response.getBody();
   }
 }
