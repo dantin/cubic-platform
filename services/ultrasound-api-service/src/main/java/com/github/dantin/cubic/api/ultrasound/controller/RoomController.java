@@ -2,9 +2,10 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.base.exception.BusinessException;
-import com.github.dantin.cubic.protocol.Pagination;
 import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.RoutePage;
+import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -31,29 +32,29 @@ public class RoomController extends BaseController {
 
   @GetMapping("/list")
   @RolesAllowed({"ultrasound-admin", "ultrasound-root"})
-  public ResponseEntity<Pagination<Route>> listRoom(
+  public ResponseEntity<RoutePage> listRoom(
       @RequestParam(value = "n", defaultValue = "1", required = false) int number,
       @RequestParam(value = "s", defaultValue = "8", required = false) int size) {
     String username = super.getUsername();
     LOGGER.info("list room by page triggered by '{}'", username);
 
     try {
-      Pagination<Route> rooms = roomService.listRoomByPage(number, size);
-      Pagination.Builder<Route> builder = Pagination.copyOf(rooms);
-      rooms
-          .getItems()
+      RoutePage orig = roomService.listRoomByPage(number, size);
+      RoutePage.Builder builder = RoutePage.builder().copyOf(orig);
+      orig.getRoutes()
           .forEach(
               route -> {
-                Route.Builder actual = Route.copyOf(route);
-                route
-                    .getStreams()
-                    .forEach(
-                        stream -> {
-                          if (Role.from(stream.getRole()) == Role.ADMIN) {
-                            actual.addStream(stream);
-                          }
-                        });
-                builder.addItem(actual.build());
+                builder.addRoute(
+                    Route.builder()
+                        .name(route.getName())
+                        .id(route.getId())
+                        .streams(
+                            route
+                                .getStreams()
+                                .stream()
+                                .filter(s -> Role.from(s.getRole()) == Role.ADMIN)
+                                .collect(Collectors.toList()))
+                        .build());
               });
       return ResponseEntity.ok(builder.build());
     } catch (BusinessException e) {

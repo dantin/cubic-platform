@@ -2,19 +2,9 @@ package com.github.dantin.cubic.protocol;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
-/**
- * Pagination information.
- *
- * @param <T> item type in pagination contents
- */
-@JsonDeserialize(builder = Pagination.Builder.class)
-public class Pagination<T> {
+/** Pagination information. */
+public abstract class Pagination {
 
   private final int pages;
   private final int page;
@@ -22,31 +12,14 @@ public class Pagination<T> {
   private final int size;
   private final boolean hasPrevious;
   private final boolean hasNext;
-  private final List<T> items;
 
-  private Pagination(Builder<T> builder) {
+  protected Pagination(PaginationBuilder<? extends PaginationBuilder<?, ?>, ?> builder) {
     this.pages = builder.pages;
     this.page = builder.page;
     this.total = builder.total;
     this.size = builder.size;
     this.hasPrevious = builder.hasPrevious;
     this.hasNext = builder.hasNext;
-    this.items = builder.items;
-  }
-
-  public static <T> Builder<T> builder() {
-    return new Builder<>();
-  }
-
-  public static <T> Builder<T> copyOf(Pagination<T> o) {
-    Builder<T> builder = new Builder<>();
-    builder.size = o.size;
-    builder.pages = o.pages;
-    builder.page = o.page;
-    builder.total = o.total;
-    builder.hasPrevious = o.hasPrevious;
-    builder.hasNext = o.hasNext;
-    return builder;
   }
 
   @JsonGetter("pages")
@@ -79,81 +52,68 @@ public class Pagination<T> {
     return hasNext;
   }
 
-  @JsonGetter("items")
-  public List<T> getItems() {
-    return items;
-  }
+  public abstract static class PaginationBuilder<T extends PaginationBuilder<T, B>, B>
+      implements com.github.dantin.cubic.base.Builder<B> {
 
-  @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
-  public static final class Builder<T>
-      implements com.github.dantin.cubic.base.Builder<Pagination<T>> {
+    private final T mInstance;
+
     private int pages;
     private int page;
     private int size;
     private long total;
     private boolean hasPrevious;
     private boolean hasNext;
-    private List<T> items;
 
-    Builder() {
-      this.items = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    protected PaginationBuilder() {
+      this.mInstance = (T) this;
+    }
+
+    public T copyOf(Pagination src) {
+      this.pages = src.pages;
+      this.page = src.page;
+      this.size = src.size;
+      this.total = src.total;
+      this.hasPrevious = src.hasPrevious;
+      this.hasNext = src.hasNext;
+
+      return mInstance;
     }
 
     @JsonSetter("pages")
-    public Builder<T> pages(int pages) {
+    public T pages(int pages) {
       this.pages = pages;
-      return this;
+      return mInstance;
     }
 
     @JsonSetter("page")
-    public Builder<T> page(int page) {
+    public T page(int page) {
       this.page = page;
-      return this;
+      return mInstance;
     }
 
     @JsonSetter("size")
-    public Builder<T> size(int size) {
+    public T size(int size) {
       this.size = size;
-      return this;
+      return mInstance;
     }
 
     @JsonSetter("total")
-    public Builder<T> total(long total) {
+    public T total(long total) {
       this.total = total;
-      return this;
+      return mInstance;
     }
 
     @JsonSetter("has_previous")
-    public Builder<T> hasPrevious(boolean hasPrevious) {
+    public T hasPrevious(boolean hasPrevious) {
       this.hasPrevious = hasPrevious;
-      return this;
+      return mInstance;
     }
 
     @JsonSetter("has_next")
-    public Builder<T> hasNext(boolean hasNext) {
+    public T hasNext(boolean hasNext) {
       this.hasNext = hasNext;
-      return this;
-    }
-
-    @JsonSetter("items")
-    public Builder<T> items(List<T> items) {
-      this.items = items;
-      return this;
-    }
-
-    public Builder<T> addItem(T item) {
-      if (Objects.nonNull(item)) {
-        this.items.add(item);
-      }
-      return this;
-    }
-
-    @Override
-    public Pagination<T> build() {
-      if (!Objects.isNull(items)) {
-        this.size = items.size();
-      }
-      return new Pagination<>(this);
+      return mInstance;
     }
   }
 }

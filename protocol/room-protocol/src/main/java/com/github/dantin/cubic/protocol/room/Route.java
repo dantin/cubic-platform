@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @JsonDeserialize(builder = Route.Builder.class)
 public class Route {
@@ -23,13 +24,6 @@ public class Route {
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  public static Builder copyOf(Route o) {
-    Builder builder = new Builder();
-    builder.id = o.id;
-    builder.name = o.name;
-    return builder;
   }
 
   @JsonGetter("id")
@@ -76,7 +70,7 @@ public class Route {
     }
 
     public Builder addStream(Stream stream) {
-      if (Objects.nonNull(stream)) {
+      if (!java.util.Objects.isNull(stream)) {
         this.streams.add(stream);
       }
       return this;
@@ -86,5 +80,34 @@ public class Route {
     public Route build() {
       return new Route(this);
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id, name, streams);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Route)) {
+      return false;
+    }
+    Route o = (Route) obj;
+    return Objects.equal(id, o.id)
+        && Objects.equal(name, o.name)
+        && Objects.equal(streams, o.streams);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .omitNullValues()
+        .add("id", id)
+        .add("name", name)
+        .add("stream", streams)
+        .toString();
   }
 }

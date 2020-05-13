@@ -1,9 +1,8 @@
 package com.github.dantin.cubic.api.ultrasound.service;
 
-import com.github.dantin.cubic.protocol.Pagination;
-import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.RoutePage;
 
 public interface RoomService {
 
-  Pagination<Route> listRoomByPage(int pageNumber, int pageSize);
+  RoutePage listRoomByPage(int pageNumber, int pageSize);
 }
