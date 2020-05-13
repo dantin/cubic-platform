@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
-public class MarshalTest {
+public class CodecTest {
 
   @Test
   public void marshalStream_thenSuccess() {

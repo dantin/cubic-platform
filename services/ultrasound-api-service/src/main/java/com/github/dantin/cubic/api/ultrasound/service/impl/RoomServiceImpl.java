@@ -1,12 +1,10 @@
 package com.github.dantin.cubic.api.ultrasound.service.impl;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
-import com.github.dantin.cubic.protocol.Pagination;
-import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.RoutePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,7 +25,7 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
-  public Pagination<Route> listRoomByPage(int pageNumber, int pageSize) {
+  public RoutePage listRoomByPage(int pageNumber, int pageSize) {
     LOGGER.info("list room by page, page number {}, size {}", pageNumber, pageSize);
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -37,12 +35,8 @@ public class RoomServiceImpl implements RoomService {
             .queryParam("page_number", pageNumber)
             .queryParam("page_size", pageSize);
 
-    ResponseEntity<Pagination<Route>> routes =
-        restTemplate.exchange(
-            uriBuilder.toUriString(),
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<Pagination<Route>>() {});
+    ResponseEntity<RoutePage> routes =
+        restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, entity, RoutePage.class);
     if (!routes.getStatusCode().is2xxSuccessful()) {
       throw new RuntimeException("fail to invoke room-service");
     }

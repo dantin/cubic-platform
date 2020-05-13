@@ -1,9 +1,9 @@
 package com.github.dantin.cubic.room.controller;
 
 import com.github.dantin.cubic.base.exception.BusinessException;
-import com.github.dantin.cubic.protocol.Pagination;
 import com.github.dantin.cubic.protocol.SearchCriteria;
 import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.RoutePage;
 import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.room.entity.model.Room;
 import com.github.dantin.cubic.room.entity.model.RoomAllocation;
@@ -34,7 +34,7 @@ public class RoomController {
   }
 
   @GetMapping
-  public ResponseEntity<Pagination<Route>> listRooms(
+  public ResponseEntity<RoutePage> listRooms(
       @RequestParam(value = "n", defaultValue = "1", required = false) int number,
       @RequestParam(value = "s", defaultValue = "8", required = false) int size) {
     LOGGER.info("list room by page, page number {}, size {}", number, size);
@@ -43,15 +43,15 @@ public class RoomController {
         roomService.listRooms(SearchCriteria.builder().pageNumber(number).pageSize(size).build());
 
     LOGGER.info("build room pagination");
-    Pagination.Builder<Route> builder =
-        Pagination.<Route>builder()
+    RoutePage.Builder builder =
+        RoutePage.builder()
             .pages(roomsByPage.getPages())
             .page(roomsByPage.getPageNum())
             .total(roomsByPage.getTotal())
             .hasPrevious(roomsByPage.isHasPreviousPage())
             .hasNext(roomsByPage.isHasNextPage());
 
-    roomsByPage.getList().forEach(room -> builder.addItem(buildRoute(room)));
+    roomsByPage.getList().forEach(room -> builder.addRoute(buildRoute(room)));
     return ResponseEntity.ok(builder.build());
   }
 

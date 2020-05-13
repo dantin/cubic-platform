@@ -10,13 +10,12 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
-import com.github.dantin.cubic.protocol.Pagination;
 import com.github.dantin.cubic.protocol.room.Device;
 import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
+import com.github.dantin.cubic.protocol.room.RoutePage;
 import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
 import com.tngtech.keycloakmock.api.KeycloakVerificationMock;
@@ -134,7 +133,7 @@ public class UltrasoundApiMvcTest {
 
   private void listRoomByPage(String accessToken, int page, int size, int pages) throws Exception {
     // mock data
-    Pagination.Builder<Route> builder = Pagination.builder();
+    RoutePage.Builder builder = RoutePage.builder();
     builder.pages(pages).page(page).size(size);
     for (int i = 0; i < size; i++) {
       int id = page * size + i;
@@ -163,7 +162,7 @@ public class UltrasoundApiMvcTest {
               .type(Device.DEVICE.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
-      builder.addItem(route.build());
+      builder.addRoute(route.build());
     }
 
     Mockito.when(roomServiceMock.listRoomByPage(page, size)).thenReturn(builder.build());
@@ -183,11 +182,14 @@ public class UltrasoundApiMvcTest {
     String jsonString = result.getResponse().getContentAsString();
     assertNotNull(jsonString);
 
-    Pagination<Route> routesByPage =
-        MAPPER.readValue(jsonString, new TypeReference<Pagination<Route>>() {});
+    RoutePage routesByPage = MAPPER.readValue(jsonString, RoutePage.class);
     assertThat(routesByPage.getPages(), is(pages));
     assertThat(routesByPage.getPage(), is(page));
     assertThat(routesByPage.getSize(), is(size));
+
+    for (Route route : routesByPage.getRoutes()) {
+      System.out.println(route);
+    }
   }
 
   @Test
