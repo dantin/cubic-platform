@@ -35,8 +35,10 @@ public class RoomController extends BaseController {
   public ResponseEntity<RoutePage> listRoom(
       @RequestParam(value = "n", defaultValue = "1", required = false) int number,
       @RequestParam(value = "s", defaultValue = "8", required = false) int size) {
+    LOGGER.info("list room by page");
+
     String username = super.getUsername();
-    LOGGER.info("list room by page triggered by '{}'", username);
+    LOGGER.info("list room triggered by '{}'", username);
 
     try {
       RoutePage orig = roomService.listRoomByPage(number, size);
@@ -65,12 +67,27 @@ public class RoomController extends BaseController {
 
   @GetMapping
   @RolesAllowed({"ultrasound-user", "ultrasound-admin", "ultrasound-root"})
-  public ResponseEntity<String> getRoom() {
-    LOGGER.info("load room information");
+  public ResponseEntity<Route> getRoom() {
+    LOGGER.info("load room");
 
     String username = super.getUsername();
-    LOGGER.debug("found user '{}' in security context", username);
+    LOGGER.info("load room triggered by '{}'", username);
 
-    return ResponseEntity.ok().build();
+    try {
+      Route orig = roomService.getRoom(username);
+      Route.Builder builder =
+          Route.builder()
+              .id(orig.getId())
+              .name(orig.getName())
+              .streams(
+                  orig.getStreams()
+                      .stream()
+                      .filter(s -> Role.from(s.getRole()) == Role.USER)
+                      .collect(Collectors.toList()));
+      return ResponseEntity.ok(builder.build());
+    } catch (BusinessException e) {
+      LOGGER.warn("load room failed", e);
+      return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+    }
   }
 }

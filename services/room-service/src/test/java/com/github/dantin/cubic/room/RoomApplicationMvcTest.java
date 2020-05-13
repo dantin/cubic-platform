@@ -79,7 +79,7 @@ public class RoomApplicationMvcTest {
     String resultString = result.andReturn().getResponse().getContentAsString();
 
     JacksonJsonParser jsonParser = new JacksonJsonParser();
-    String name = jsonParser.parseMap(resultString).get("name").toString();
+    String name = jsonParser.parseMap(resultString).get("room").toString();
     assertEquals("Room-01", name);
   }
 
