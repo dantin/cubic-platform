@@ -27,8 +27,3 @@ eureka:
 logging:
   level:
     ROOT: info
-    org:
-      springframework:
-        cloud.gateway: DEBUG
-        http.server.reactive: DEBUG
-        web.reactive: DEBUG

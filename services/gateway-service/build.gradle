@@ -19,6 +19,8 @@ dependencies {
     implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 
     // test
+    testImplementation project(":protocol:chat-protocol")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-websocket")
     testImplementation("io.rest-assured:rest-assured")
 }
