@@ -11,6 +11,10 @@ spring:
           uri: lb://ultrasound-api-service/ultrasound
           predicates:
             - Path=/ultrasound/**
+        - id: chat-api-service
+          uri: lb://chat-api-service/chat
+          predicates:
+            - Path=/chat/**
 
 eureka:
   client:
@@ -19,8 +23,6 @@ eureka:
     registry-fetch-interval-seconds: 15
     service-url:
       defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
-    healthcheck:
-      enabled: true
 
 logging:
   level:

@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.oauth2;
+package com.github.dantin.cubic.gateway;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 
 // need oauth2-service to be running.
 @Ignore
-public class OAuth2ApplicationIntegrationTest {
+public class GatewayIntegrationTest {
 
   @Test
   public void whenServiceStartsAndLoadsRealmConfiguration_thenOidcDiscoveryEndpointIsAvailable() {
