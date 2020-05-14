@@ -1,5 +1,7 @@
 server:
-  port: 10002
+  port: 0
+  servlet:
+    context-path: /chat
 
 channel:
   broadcast: websocket.broadcast
@@ -9,6 +11,8 @@ status:
   onlineUserKey: onlineUsers
 
 spring:
+  application:
+    name: chat-api-service
   redis:
     database: 1
     host: localhost
@@ -22,3 +26,11 @@ spring:
         max-wait: 5000ms
         max-idle: 8
         min-idle: 2
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 15
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}

@@ -33,8 +33,8 @@ public class RoomServiceImpl implements RoomService {
     HttpEntity<String> entity = new HttpEntity<>(headers);
     UriComponentsBuilder uriBuilder =
         UriComponentsBuilder.fromHttpUrl("http://room-service/rooms")
-            .queryParam("page_number", pageNumber)
-            .queryParam("page_size", pageSize);
+            .queryParam("n", pageNumber)
+            .queryParam("s", pageSize);
 
     ResponseEntity<RoutePage> response =
         restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, entity, RoutePage.class);

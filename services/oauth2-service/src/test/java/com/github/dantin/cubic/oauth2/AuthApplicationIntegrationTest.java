@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 
 // need oauth2-service to be running.
 @Ignore
-public class OAuth2ApplicationIntegrationTest {
+public class AuthApplicationIntegrationTest {
 
   @Test
   public void whenServiceStartsAndLoadsRealmConfiguration_thenOidcDiscoveryEndpointIsAvailable() {
