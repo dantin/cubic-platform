@@ -3,25 +3,14 @@ server:
 
 spring:
   application:
-    name: gateway
-  security:
-    oauth2:
-      client:
-        registration:
-          gateway:
-            provider: uaa
-            client-id: gateway
-            client-secret: secret
-            authorization-grant-type: authorization_code
-            redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: openid,profile,email.resource.read
-        provider:
-          uaa:
-            authorization-uri: http://localhost:8090/uaa/oauth/authorize
-            token-uri: http://uaa:8090/uaa/oauth/token
-            user-info-uri: http://uaa:8090/uaa/userinfo
-            user-name-attribute: sub
-            jwk-set-uri: http://uaa:8090/uaa/token_keys
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: ultrasound-api-service
+          uri: lb://ultrasound-api-service/ultrasound
+          predicates:
+            - Path=/ultrasound/**
 
 eureka:
   client:
@@ -36,3 +25,8 @@ eureka:
 logging:
   level:
     ROOT: info
+    org:
+      springframework:
+        cloud.gateway: DEBUG
+        http.server.reactive: DEBUG
+        web.reactive: DEBUG
