@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-// need oauth2-service to be running.
+// need all services to be running.
 // @Ignore
 public class GatewayIntegrationTest {
 
@@ -29,7 +29,7 @@ public class GatewayIntegrationTest {
   }
 
   @Test
-  public void retrieveRoom_thenSuccess() {
+  public void userRetrieveRoom_thenSuccess() {
     String accessToken = obtainAccessToken("room01", "password");
 
     String url = "/ultrasound/room";
@@ -44,9 +44,23 @@ public class GatewayIntegrationTest {
   }
 
   @Test
-  public void listRoom_thenSuccess() {
+  public void userListRoom_thenFail() {
+    String accessToken = obtainAccessToken("room01", "password");
+
+    String url = "/ultrasound/room/list";
+    RestAssured.given()
+        .header("Authorization", "Bearer " + accessToken)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .get(url)
+        .then()
+        .statusCode(HttpStatus.FORBIDDEN.value());
+  }
+
+  @Test
+  public void adminListRoom_thenSuccess() {
     String accessToken = obtainAccessToken("admin", "password");
 
+    // default list
     String url = "/ultrasound/room/list";
     Response response =
         RestAssured.given()
@@ -62,8 +76,8 @@ public class GatewayIntegrationTest {
     response =
         RestAssured.given()
             .header("Authorization", "Bearer " + accessToken)
-            .queryParam("s", "4")
             .queryParam("n", "1")
+            .queryParam("s", "4")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
 
@@ -73,6 +87,25 @@ public class GatewayIntegrationTest {
     assertThat(response.jsonPath().getString("size")).isEqualTo("4");
     assertThat(response.jsonPath().getString("page")).isEqualTo("1");
     assertThat(response.jsonPath().getString("pages")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("has_next")).isEqualTo("true");
+    assertThat(response.jsonPath().getString("has_previous")).isEqualTo("false");
+
+    response =
+        RestAssured.given()
+            .header("Authorization", "Bearer " + accessToken)
+            .queryParam("n", "2")
+            .queryParam("s", "4")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .get(url);
+
+    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
+    assertThat(response.jsonPath().getMap("$."))
+        .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
+    assertThat(response.jsonPath().getString("size")).isEqualTo("1");
+    assertThat(response.jsonPath().getString("page")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("pages")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("has_next")).isEqualTo("false");
+    assertThat(response.jsonPath().getString("has_previous")).isEqualTo("true");
   }
 
   private String obtainAccessToken(String username, String password) {
