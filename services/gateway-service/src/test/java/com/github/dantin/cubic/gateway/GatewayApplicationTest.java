@@ -1,6 +1,5 @@
 package com.github.dantin.cubic.gateway;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
     value = {"eureka.client.enabled:false"},
     webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Ignore
 public class GatewayApplicationTest {
 
   @Test
