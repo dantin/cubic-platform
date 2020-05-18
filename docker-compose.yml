@@ -4,8 +4,7 @@ services:
     image: postgres:11.5-alpine
     restart: always
     volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "${DATA_PATH}/postgres:/var/lib/postgresql/data"
+      - postgres_database:/var/lib/postgresql/data
       - "${CODE_PATH}/data/postgres-entrypoint:/docker-entrypoint-initdb.d"
     ports:
       - "5432:5432"
@@ -18,10 +17,15 @@ services:
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "${DATA_PATH}/redis:/data"
+      - redis_database:/data
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
     ports:
       - "6379:6379"
     environment:
       - TZ=Asia/Shanghai
+
+volumes:
+  postgres_database:
+    external: true
+  redis_database:
+    external: true
