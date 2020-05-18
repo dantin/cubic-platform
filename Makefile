@@ -6,6 +6,10 @@ vet:
 fmt:
 	@./gradlew googleJavaFormat
 
+.PHONY: cov
+cov:
+	@./gradlew jacocoTestReport
+
 .PHONY: test
 test: vet
 	@./gradlew check
@@ -20,4 +24,4 @@ clean:
 
 .PHONY: docker
 docker: jar
-	docker build --force-rm -t apm/ultrasound-server .
+	@ docker build --force-rm -t apm/ultrasound-server .
