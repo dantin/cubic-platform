@@ -7,9 +7,7 @@ jdk:
   - openjdk8
 
 before_install:
-  - >
-    psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres &&
-    psql -d oauth2_db -f ./data/db.sql -U postgres
+  - psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres
   - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
 
 before_script:
