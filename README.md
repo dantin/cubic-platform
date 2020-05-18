@@ -1,5 +1,5 @@
-# Ultrasound Platform
+# Cubic Platform
 
-[![Build Status](https://travis-ci.com/dantin/ultrasound-platform.svg?token=6WmoCmamS1CUeUqk1kLy&branch=master)](https://travis-ci.com/dantin/ultrasound-platform)
+[![Build Status](https://travis-ci.com/dantin/cubic-platform.svg?&branch=master)](https://travis-ci.com/dantin/cubic-platform)
 
-Remote Ultrasound Video Stream Platform using Microservice Architecture.
+Cubic Platform using Microservice Architecture.
