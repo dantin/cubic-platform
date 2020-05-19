@@ -16,6 +16,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
 
     compileJava {
         sourceCompatibility = JavaVersion.VERSION_1_8

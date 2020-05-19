@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: ${SERVER_PORT:8083}
 
 spring:
   application:
@@ -22,3 +22,10 @@ keycloak:
 logging:
   level:
     ROOT: info
+
+---
+# For development in docker container
+spring:
+  profiles: docker
+  datasource:
+    url: jdbc:postgresql://postgres:5432/oauth2_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true

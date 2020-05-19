@@ -17,6 +17,8 @@ spring:
             - Path=/chat/**
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -27,3 +29,8 @@ eureka:
 logging:
   level:
     ROOT: info
+
+---
+# For development in docker container
+spring:
+  profiles: docker

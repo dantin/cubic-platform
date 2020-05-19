@@ -1,11 +1,11 @@
 server:
-  port: 0
+  port: ${SERVER_PORT:0}
   servlet:
     context-path: /ultrasound
 
 keycloak:
   realm: ultrasound
-  auth-server-url: http://localhost:8083/auth
+  auth-server-url: ${AUTH_SERVER_URL:http://localhost:8083/auth}
   ssl-required: external
   resource: ultrasound_api_service
   credentials:
@@ -18,6 +18,8 @@ spring:
     name: ultrasound-api-service
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -29,3 +31,8 @@ logging:
   level:
     ROOT: info
     com.github.dantin: debug
+
+---
+# For development in docker container
+spring:
+  profiles: docker

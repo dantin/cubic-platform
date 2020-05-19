@@ -1,7 +1,26 @@
 server:
-  port: 0
+  port: ${SERVER_PORT:0}
 
 media-server:
   base-url: ${MEDIA_SERVER_URL:http://localhost:9001}
   username: ${MEDIA_SERVER_USERNAME:admin}
   password: ${MEDIA_SERVER_PASSWORD:password}
+
+spring:
+  application:
+    name: shm-service
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 15
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+
+---
+# For development in docker container
+spring:
+  profiles: docker

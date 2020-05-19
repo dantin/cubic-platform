@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: ${SERVER_PORT:0}
   servlet:
     context-path: /chat
 
@@ -15,7 +15,7 @@ spring:
     name: chat-api-service
   redis:
     database: 1
-    host: localhost
+    host: ${REDIS_SERVER_HOST:localhost}
     port: 6379
     password: password
     timeout: 2000
@@ -28,9 +28,16 @@ spring:
         min-idle: 2
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: true
     registry-fetch-interval-seconds: 15
     service-url:
       defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+
+---
+# For development in docker container
+spring:
+  profiles: docker

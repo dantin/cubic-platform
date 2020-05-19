@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: ${SERVER_PORT:8761}
 
 spring:
   application:
@@ -10,6 +10,8 @@ spring:
         enabled: false
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     register-with-eureka: false
     fetch-registry: false
@@ -19,3 +21,8 @@ logging:
     ROOT: info
     com.netflix.eureka: off
     com.netflix.discovery: off
+
+---
+# For development in docker container
+spring:
+  profiles: docker
