@@ -40,6 +40,6 @@ images: jar
 	@for subdir in $(SERVICES); \
 		do \
 		  m=`echo $$subdir | cut -d/ -f 2`; \
-		  echo "build docker image for $$m"; \
+		  echo -e "\n==> build docker image for '$$m' <==\n"; \
 		  cd $(SOURCE_DIR)/$$subdir; docker build --force-rm -t cubic/$$m .; \
 		done
