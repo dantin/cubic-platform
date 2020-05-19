@@ -6,6 +6,10 @@ media-server:
   username: ${MEDIA_SERVER_USERNAME:admin}
   password: ${MEDIA_SERVER_PASSWORD:password}
 
+spring:
+  application:
+    name: shm-service
+
 eureka:
   instance:
     prefer-ip-address: true

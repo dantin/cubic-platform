@@ -44,23 +44,6 @@ services:
       - TZ=Asia/Shanghai
     depends_on:
       - postgres
-  room-service:
-    image: cubic/room-service:latest
-    restart: always
-    command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
-             ./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
-             ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
-             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
-    environment:
-      - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
-      - SERVER_PORT=8080
-      - REDIS_SERVER_HOST=redis
-    depends_on:
-      - discovery-service
-      - postgres
-      - redis
   shm-service:
     image: cubic/shm-service:latest
     restart: always
@@ -73,6 +56,69 @@ services:
       - SERVER_PORT=8080
     depends_on:
       - discovery-service
+  room-service:
+    image: cubic/room-service:latest
+    restart: always
+    command: >
+      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+             ./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
+             ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
+    environment:
+      - TZ=Asia/Shanghai
+      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - REDIS_SERVER_HOST=redis
+      - SERVER_PORT=8080
+    depends_on:
+      - discovery-service
+      - postgres
+      - redis
+  ultrasound-api-service:
+    image: cubic/ultrasound-api-service:latest
+    restart: always
+    command: >
+      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+             ./wait-for room-service:8080 -t 1000 -- echo 'room-service is up' &&
+             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
+    environment:
+      - TZ=Asia/Shanghai
+      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - AUTH_SERVER_URL=http://oauth2-service:8083/auth
+      - SERVER_PORT=8080
+    depends_on:
+      - discovery-service
+      - room-service
+  chat-api-service:
+    image: cubic/chat-api-service:latest
+    restart: always
+    command: >
+      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+             ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
+    environment:
+      - TZ=Asia/Shanghai
+      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - AUTH_SERVER_URL=http://oauth2-service:8083/auth
+      - REDIS_SERVER_HOST=redis
+      - SERVER_PORT=8080
+    depends_on:
+      - discovery-service
+      - redis
+  gateway-service:
+    image: cubic/gateway-service:latest
+    restart: always
+    command: >
+      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+             ./wait-for ultrasound-api-service:8080 -t 1000 -- echo 'ultrasound-api-service is up' &&
+             ./wait-for chat-api-service:8080 -t 1000 -- echo 'chat-api-service is up' &&
+             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
+    environment:
+      - TZ=Asia/Shanghai
+      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+      - ultrasound-api-service
+      - chat-api-service
 
 volumes:
   postgres_database:
