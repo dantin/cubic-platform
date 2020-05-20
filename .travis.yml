@@ -8,10 +8,10 @@ services:
   - docker
 
 install:
-  - make init
   - REPO_DIR=`pwd`
-  - echo "CODE_PATH=${REPO_DIR}" > .env
-  - cat .env
+  - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+  - cat $REPO_DIR/.env
+  - make init
   - make env-up
 
 scripts:
