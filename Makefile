@@ -58,5 +58,6 @@ env-down:
 	@docker-compose -f docker-compose.yml down --remove-orphans
 
 .PHONY: prune
+prune:
 	@docker volume rm redis_database
 	@docker volume rm postgres_database

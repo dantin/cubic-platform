@@ -10,12 +10,8 @@ services:
 install:
   - REPO_DIR=`pwd`
   - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-  - cat $REPO_DIR/.env
   - make init
   - make env-up
 
 scripts:
-  - netstat -lntp
-  - docker ps
   - make test
-  #- make env-down
