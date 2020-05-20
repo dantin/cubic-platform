@@ -10,7 +10,6 @@ include 'protocol:room-protocol'
 include 'protocol:ultrasound-protocol'
 
 include 'services:discovery-service'
-include 'services:oauth2-service'
 include 'services:gateway-service'
 include 'services:room-service'
 include 'services:shm-service'

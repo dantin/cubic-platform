@@ -43,3 +43,21 @@ images: jar
 		  echo -e "\n==> build docker image for '$$m' <==\n"; \
 		  cd $(SOURCE_DIR)/$$subdir; docker build --force-rm -t cubic/$$m .; \
 		done
+
+.PHONY: init
+init:
+	@docker volume create postgres_database
+	@docker volume create redis_database
+
+.PHONY: env-up
+env-up:
+	@docker-compose -f docker-compose.yml up -d --force-recreate
+
+.PHONY: env-down
+env-down:
+	@docker-compose -f docker-compose.yml down --remove-orphans
+
+.PHONY: prune
+prune:
+	@docker volume rm redis_database
+	@docker volume rm postgres_database
