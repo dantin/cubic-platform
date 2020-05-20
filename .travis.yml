@@ -7,11 +7,10 @@ jdk:
 services:
   - docker
 
-jobs:
-  include:
-    - stage: tests
-      script:
-        - make init
-        - make env-up
-        - make test
-        - make env-down
+install:
+  - make init
+  - make env-up
+
+scripts:
+  - make test
+  #- make env-down
