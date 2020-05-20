@@ -5,11 +5,11 @@ server:
 
 keycloak:
   realm: ultrasound
-  auth-server-url: ${AUTH_SERVER_URL:http://localhost:8083/auth}
+  auth-server-url: ${AUTH_SERVER_URL:http://localhost:9990/auth}
   ssl-required: external
   resource: ultrasound_api_service
   credentials:
-    secret: 3d973f0c-d0ed-43b9-8c13-67f5ea73e335
+    secret: 4b63963a-c21a-47aa-8abd-68997389234d
   use-resource-role-mappings: true
   bearer-only: true
 

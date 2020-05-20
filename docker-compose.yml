@@ -7,7 +7,7 @@ services:
       - postgres_database:/var/lib/postgresql/data
       - "${CODE_PATH}/data/postgres-entrypoint:/docker-entrypoint-initdb.d"
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -20,9 +20,24 @@ services:
       - redis_database:/data
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
     ports:
-      - "6379:6379"
+      - 6379:6379
     environment:
       - TZ=Asia/Shanghai
+  keycloak:
+    image: jboss/keycloak:8.0.0
+    ports:
+      - 9990:8080
+      - 9991:8443
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=postgres
+      - DB_DATABASE=oauth2_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+    depends_on:
+      - postgres
 
 volumes:
   postgres_database:

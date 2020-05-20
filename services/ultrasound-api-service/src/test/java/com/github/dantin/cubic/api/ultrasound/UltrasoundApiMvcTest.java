@@ -3,6 +3,7 @@ package com.github.dantin.cubic.api.ultrasound;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -18,15 +19,13 @@ import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
 import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
-import com.tngtech.keycloakmock.api.KeycloakVerificationMock;
-import com.tngtech.keycloakmock.api.TokenConfig;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import java.net.URI;
-import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
-import org.junit.AfterClass;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -58,8 +57,6 @@ import org.springframework.web.context.WebApplicationContext;
 @AutoConfigureMockMvc
 public class UltrasoundApiMvcTest {
 
-  private static KeycloakVerificationMock keycloakMock;
-
   private final ObjectMapper MAPPER = new ObjectMapper();
 
   private MockRestServiceServer mockAuthServer;
@@ -73,19 +70,6 @@ public class UltrasoundApiMvcTest {
   private RestTemplate edgeClient;
 
   @MockBean private RoomService roomServiceMock;
-
-  @BeforeClass
-  public static void setUp() {
-    keycloakMock = new KeycloakVerificationMock(8083, "ultrasound");
-    keycloakMock.start();
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    if (!Objects.isNull(keycloakMock)) {
-      keycloakMock.stop();
-    }
-  }
 
   @Before
   public void init() {
@@ -102,7 +86,7 @@ public class UltrasoundApiMvcTest {
             ExpectedCount.once(),
             requestTo(
                 new URI(
-                    "http://localhost:8083/auth/realms/ultrasound/protocol/openid-connect/token")))
+                    "http://localhost:9990/auth/realms/ultrasound/protocol/openid-connect/token")))
         .andExpect(method(HttpMethod.POST))
         .andRespond(
             withStatus(HttpStatus.OK)
@@ -127,10 +111,10 @@ public class UltrasoundApiMvcTest {
   @Test
   public void getRoom_thenSuccess() throws Exception {
     final String username = "room01";
-    String accessToken = obtainMockAccessToken(username, "ultrasound-user");
+    String accessToken = obtainMockAccessToken(username, "password");
 
     // mock data
-    Route.Builder builder = Route.builder().id(String.valueOf("1")).name("route 1");
+    Route.Builder builder = Route.builder().id("1").name("route 1");
     builder.addStream(
         Stream.builder()
             .role(Role.ADMIN.getAlias())
@@ -179,7 +163,7 @@ public class UltrasoundApiMvcTest {
 
   @Test
   public void listRoomByPage_thenSuccess() throws Exception {
-    String accessToken = obtainMockAccessToken("admin", "ultrasound-admin");
+    String accessToken = obtainMockAccessToken("admin", "password");
     listRoomByPage(accessToken, 1, 8, 10);
     listRoomByPage(accessToken, 2, 4, 4);
   }
@@ -247,7 +231,7 @@ public class UltrasoundApiMvcTest {
 
   @Test
   public void getUserProfile_thenSuccess() throws Exception {
-    String accessToken = obtainMockAccessToken("room01", "ultrasound-user");
+    String accessToken = obtainMockAccessToken("room01", "password");
     MvcResult result =
         mockMvc
             .perform(
@@ -268,19 +252,21 @@ public class UltrasoundApiMvcTest {
     }
   }
 
-  private String obtainMockAccessToken(String username, String role) {
-    Instant now = Instant.now();
-    int i = (int) (now.getEpochSecond() / 1000);
+  private String obtainMockAccessToken(String username, String password) {
+    JSONObject json = null;
+    try {
+      json = new JSONObject().put("username", username).put("password", password);
+    } catch (JSONException e) {
+      assertNull(e);
+    }
 
-    String accessToken =
-        keycloakMock.getAccessToken(
-            TokenConfig.aTokenConfig()
-                .withAuthenticationTime(Instant.ofEpochSecond(i))
-                .withPreferredUsername(username)
-                .withRealmRole("app_user")
-                .withResourceRole("ultrasound_api_service", role)
-                .build());
+    String url = "/ultrasound/auth/login";
+    Response response =
+        RestAssured.given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(json.toString())
+            .post(url);
 
-    return String.format("Bearer %s", accessToken);
+    return String.format("Bearer %s", response.jsonPath().getString("access_token"));
   }
 }
