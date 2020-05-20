@@ -12,5 +12,7 @@ install:
   - make env-up
 
 scripts:
+  - netstat -lntp
+  - docker ps
   - make test
   #- make env-down
