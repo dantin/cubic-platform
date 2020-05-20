@@ -1,14 +1,17 @@
+sudo: enabled
+
 language: java
-
-services:
-  - postgresql
-
 jdk:
   - openjdk8
 
-before_install:
-  - psql -c "CREATE DATABASE oauth2_db WITH ENCODING='utf-8';" -U postgres
-  - psql -c "CREATE DATABASE room_db WITH ENCODING='utf-8';" -U postgres
+services:
+  - docker
 
-before_script:
-  - sudo redis-server /etc/redis/redis.conf --requirepass 'password'
+jobs:
+  include:
+    - stage: tests
+      script:
+        - make init
+        - make env-up
+        - make test
+        - make env-down

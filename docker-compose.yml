@@ -25,6 +25,8 @@ services:
       - TZ=Asia/Shanghai
   keycloak:
     image: jboss/keycloak:8.0.0
+    volumes:
+      - "${CODE_PATH}/data/keycloak/ultrasound-realm.json:/tmp/ultrasound-realm.json"
     ports:
       - 9990:8080
       - 9991:8443
@@ -36,6 +38,8 @@ services:
       - DB_PASSWORD=password
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=password
+      - KEYCLOAK_IMPORT=/tmp/ultrasound-realm.json
+      - TZ=Asia/Shanghai
     depends_on:
       - postgres
 
