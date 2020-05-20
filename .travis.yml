@@ -9,6 +9,9 @@ services:
 
 install:
   - make init
+  - REPO_DIR=`pwd`
+  - echo "CODE_PATH=${REPO_DIR}" > .env
+  - cat .env
   - make env-up
 
 scripts:
