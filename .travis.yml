@@ -29,16 +29,17 @@ jobs:
       - make image
       - make images
       - make init
-      - make env-up
-      - make env-down
       - make standalone-up
+      - ./wait-for localhost:5432 -t 1000 -- echo 'postgres is up'
+      - ./wait-for localhost:6379 -t 1000 -- echo 'redis is up'
       - ./wait-for localhost:8761 -t 1000 -- echo 'discovery-service is up'
       - ./wait-for localhost:9990 -t 1000 -- echo 'keycloak http is up'
       - ./wait-for localhost:9991 -t 1000 -- echo 'keycloak https is up'
       - ./wait-for localhost:8080 -t 1000 -- echo 'gateway is up'
     script:
       # with 5 minutes of timeout: if timeout is reached, it exits with error(1)
-      - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 5; done' || false
+      - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9990/auth/admin/master/console/)" != "200" ]]; do sleep 5 && echo "wait for keycloak"; done' || false
+      - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 5 && echo "wait for gateway"; done' || false
       - make integration-test
       - make standalone-down
       - make prune
