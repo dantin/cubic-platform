@@ -1,8 +1,9 @@
-sudo: enabled
-
 language: java
 jdk:
   - openjdk8
+
+os:
+  - linux
 
 services:
   - docker
@@ -15,7 +16,7 @@ jobs:
     - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
     - make init
     - make env-up
-    scripts:
+    script:
     - make vet
     - make unit-test
     - make env-down
@@ -29,12 +30,11 @@ jobs:
       - make images
       - make init
       - make standalone-up
-    scripts:
-      - >
-        ./wait-for localhost:8761 -t 1000 -- echo 'discovery-service is up' &&
-        ./wait-for localhost:9990 -t 1000 -- echo 'keycloak http is up' &&
-        ./wait-for localhost:9991 -t 1000 -- echo 'keycloak https is up' &&
-        ./wait-for localhost:8080 -t 1000 -- echo 'gateway is up' &&
-        make integration-test
+    script:
+      - ./wait-for localhost:8761 -t 1000 -- echo 'discovery-service is up'
+      - ./wait-for localhost:9990 -t 1000 -- echo 'keycloak http is up'
+      - ./wait-for localhost:9991 -t 1000 -- echo 'keycloak https is up'
+      - ./wait-for localhost:8080 -t 1000 -- echo 'gateway is up'
+      - make integration-test
       - make standalone-down
       - make prune
