@@ -6,6 +6,8 @@ services:
     volumes:
       - postgres_database:/var/lib/postgresql/data
       - "${CODE_PATH}/data/postgres-entrypoint:/docker-entrypoint-initdb.d"
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -14,6 +16,8 @@ services:
     image: redis:5.0.8-alpine
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
     volumes:
       - redis_database:/data
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
