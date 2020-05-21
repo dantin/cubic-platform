@@ -23,7 +23,7 @@ unit-test:
 	@./gradlew test -PexcludeTests='**/GatewayIntegrationTest.class'
 
 .PHONY: integration-test
-integration-test: vet
+integration-test:
 	@./gradlew test -Dtest.single=GatewayIntegrationTest
 
 .PHONY: jar

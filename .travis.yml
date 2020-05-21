@@ -15,6 +15,6 @@ jobs:
     - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
     - make init
     - make env-up
-  scripts:
+    scripts:
     - make vet
     - make unit-test
