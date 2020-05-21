@@ -25,8 +25,9 @@ jobs:
     install:
       - REPO_DIR=`pwd`
       - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-      - make init
+      - make image
       - make images
+      - make init
       - make standalone-up
     scripts:
       - make integration-test
