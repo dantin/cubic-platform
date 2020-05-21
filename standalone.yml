@@ -38,7 +38,7 @@ services:
       - DB_PASSWORD=password
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=password
-      - KEYCLOAK_IMPORT=/tmp/ultrasound-realm.json
+      #- KEYCLOAK_IMPORT=/tmp/ultrasound-realm.json
       - TZ=Asia/Shanghai
     depends_on:
       - postgres

@@ -29,6 +29,8 @@ jobs:
       - make image
       - make images
       - make init
+      - make env-up
+      - make env-down
       - make standalone-up
     script:
       - ./wait-for localhost:8761 -t 1000 -- echo 'discovery-service is up'
