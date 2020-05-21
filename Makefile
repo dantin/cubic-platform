@@ -24,7 +24,7 @@ unit-test:
 
 .PHONY: integration-test
 integration-test:
-	@./gradlew test --tests com.github.dantin.cubic.gateway.GatewayIntegrationTest
+	@./gradlew check
 
 .PHONY: jar
 jar:
