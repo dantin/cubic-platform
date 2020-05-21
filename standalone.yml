@@ -6,6 +6,8 @@ services:
     volumes:
       - postgres_database:/var/lib/postgresql/data
       - "${CODE_PATH}/data/postgres-entrypoint:/docker-entrypoint-initdb.d"
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -14,32 +16,41 @@ services:
     image: redis:5.0.8-alpine
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
     volumes:
       - redis_database:/data
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
     environment:
       - TZ=Asia/Shanghai
+  keycloak:
+    image: jboss/keycloak:8.0.0
+    volumes:
+      - "${CODE_PATH}/data/keycloak/ultrasound-realm.json:/tmp/ultrasound-realm.json"
+    ports:
+      - 9990:8080
+      - 9991:8443
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=postgres
+      - DB_DATABASE=oauth2_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - KEYCLOAK_IMPORT=/tmp/ultrasound-realm.json
+      - TZ=Asia/Shanghai
+    depends_on:
+      - postgres
   discovery-service:
     image: cubic/discovery-service:latest
     restart: always
     ports:
-      - "8761:8761"
+      - 8761:8761
     command: >
       sh -c "java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
-  oauth2-service:
-    image: cubic/oauth2-service:latest
-    restart: always
-    command: >
-      sh -c "./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
-             java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
-    ports:
-      - "8083:8083"
-    environment:
-      - TZ=Asia/Shanghai
-    depends_on:
-      - postgres
   shm-service:
     image: cubic/shm-service:latest
     restart: always
@@ -75,14 +86,16 @@ services:
     command: >
       sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
              ./wait-for room-service:8080 -t 1000 -- echo 'room-service is up' &&
+             ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
       - EUREKA_SERVER=http://discovery-service:8761/eureka/
-      - AUTH_SERVER_URL=http://oauth2-service:8083/auth
+      - AUTH_SERVER_URL=http://keycloak:8080/auth
       - SERVER_PORT=8080
     depends_on:
       - discovery-service
+      - keycloak
       - room-service
   chat-api-service:
     image: cubic/chat-api-service:latest
@@ -90,15 +103,17 @@ services:
     command: >
       sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
              ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
       - EUREKA_SERVER=http://discovery-service:8761/eureka/
-      - AUTH_SERVER_URL=http://oauth2-service:8083/auth
+      - AUTH_SERVER_URL=http://keycloak:8080/auth
       - REDIS_SERVER_HOST=redis
       - SERVER_PORT=8080
     depends_on:
       - discovery-service
+      - keycloak
       - redis
   gateway-service:
     image: cubic/gateway-service:latest
@@ -109,7 +124,7 @@ services:
              ./wait-for chat-api-service:8080 -t 1000 -- echo 'chat-api-service is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
       - TZ=Asia/Shanghai
       - EUREKA_SERVER=http://discovery-service:8761/eureka/

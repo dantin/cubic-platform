@@ -55,6 +55,9 @@ public class UltrasoundApiMvcTest {
 
   @MockBean private RoomService roomServiceMock;
 
+  @Value("${keycloak.realm}")
+  private String realm;
+
   @Value("${keycloak.resource}")
   private String clientId;
 
@@ -230,7 +233,8 @@ public class UltrasoundApiMvcTest {
   }
 
   private String obtainMockAccessToken(String username) {
-    String url = "http://localhost:9990/auth/realms/ultrasound/protocol/openid-connect/token";
+    String url =
+        String.format("http://localhost:9990/auth/realms/%s/protocol/openid-connect/token", realm);
     // obtain authentication url with custom code
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("client_id", clientId);

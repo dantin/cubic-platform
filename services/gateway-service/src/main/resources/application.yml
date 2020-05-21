@@ -30,6 +30,15 @@ logging:
   level:
     ROOT: info
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, metrics
+  metrics:
+    export:
+      atlas:
+        enabled: false
 ---
 # For development in docker container
 spring:

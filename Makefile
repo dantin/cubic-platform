@@ -18,6 +18,10 @@ fmt:
 cov:
 	@./gradlew jacocoTestReport
 
+.PHONY: unit-test
+unit-test: vet
+	@./gradlew test -PexcludeTests='**/GatewayIntegrationTest.class'
+
 .PHONY: test
 test: vet
 	@./gradlew check
@@ -56,6 +60,14 @@ env-up:
 .PHONY: env-down
 env-down:
 	@docker-compose -f docker-compose.yml down --remove-orphans
+
+.PHONY: standalone-up
+standalone-up:
+	@docker-compose -f standalone.yml up -d --force-recreate
+
+.PHONY: standalone-down
+standalone-down:
+	@docker-compose -f standalone.yml down --remove-orphans
 
 .PHONY: prune
 prune:
