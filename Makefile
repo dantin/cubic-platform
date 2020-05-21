@@ -18,9 +18,13 @@ fmt:
 cov:
 	@./gradlew jacocoTestReport
 
-.PHONY: test
-test: vet
-	@./gradlew check
+.PHONY: unit-test
+unit-test:
+	@./gradlew test -PexcludeTests='**/GatewayIntegrationTest.class'
+
+.PHONY: integration-test
+integration-test: vet
+	@./gradlew test -Dtest.single=GatewayIntegrationTest
 
 .PHONY: jar
 jar:

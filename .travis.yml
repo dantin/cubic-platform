@@ -7,11 +7,14 @@ jdk:
 services:
   - docker
 
-install:
-  - REPO_DIR=`pwd`
-  - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-  - make init
-  - make env-up
-
-scripts:
-  - make test
+jobs:
+  include:
+  - stage: unit-tests
+    install:
+    - REPO_DIR=`pwd`
+    - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+    - make init
+    - make env-up
+  scripts:
+    - make vet
+    - make unit-test

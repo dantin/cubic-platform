@@ -24,3 +24,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-websocket")
     testImplementation("io.rest-assured:rest-assured")
 }
+
+test {
+    if (project.hasProperty('excludeTests')) {
+        exclude project.property('excludeTests')
+    }
+}
