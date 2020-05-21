@@ -42,7 +42,7 @@ services:
     image: cubic/discovery-service:latest
     restart: always
     ports:
-      - "8761:8761"
+      - 8761:8761
     command: >
       sh -c "java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
@@ -120,7 +120,7 @@ services:
              ./wait-for chat-api-service:8080 -t 1000 -- echo 'chat-api-service is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
       - TZ=Asia/Shanghai
       - EUREKA_SERVER=http://discovery-service:8761/eureka/
