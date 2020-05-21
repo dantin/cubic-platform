@@ -61,6 +61,14 @@ env-up:
 env-down:
 	@docker-compose -f docker-compose.yml down --remove-orphans
 
+.PHONY: standalone-up
+standalone-up:
+	@docker-compose -f standalone.yml up -d --force-recreate
+
+.PHONY: standalone-down
+standalone-down:
+	@docker-compose -f standalone.yml down --remove-orphans
+
 .PHONY: prune
 prune:
 	@docker volume rm redis_database

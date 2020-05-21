@@ -18,3 +18,17 @@ jobs:
     scripts:
     - make vet
     - make unit-test
+    - make env-down
+    - make prune
+
+  - stage: integration-tests
+    install:
+      - REPO_DIR=`pwd`
+      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+      - make init
+      - make images
+      - make standalone-up
+    scripts:
+      - make integration-test
+      - make standalone-down
+      - make prune
