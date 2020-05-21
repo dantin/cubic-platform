@@ -19,11 +19,11 @@ cov:
 	@./gradlew jacocoTestReport
 
 .PHONY: unit-test
-unit-test:
+unit-test: vet
 	@./gradlew test -PexcludeTests='**/GatewayIntegrationTest.class'
 
-.PHONY: integration-test
-integration-test:
+.PHONY: test
+test: vet
 	@./gradlew check
 
 .PHONY: jar

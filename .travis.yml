@@ -11,21 +11,23 @@ services:
 jobs:
   include:
   - stage: unit-tests
-    install:
-    - REPO_DIR=`pwd`
-    - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-    - make init
-    - make env-up
-    script:
-    - make vet
-    - make unit-test
-    - make env-down
-    - make prune
-
-  - stage: integration-tests
-    install:
+    before_install:
       - REPO_DIR=`pwd`
       - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+    install:
+      - make init
+      - make env-up
+    script:
+      - make unit-test
+    after_script:
+      - make env-down
+      - make prune
+
+  - stage: integration-tests
+    before_install:
+      - REPO_DIR=`pwd`
+      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+    install:
       - make image
       - make images
       - make init
@@ -40,6 +42,7 @@ jobs:
       # with 5 minutes of timeout: if timeout is reached, it exits with error(1)
       - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9990/auth/admin/master/console/)" != "200" ]]; do sleep 5 && echo "wait for keycloak"; done' || false
       - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 5 && echo "wait for gateway"; done' || false
-      - make integration-test
+      - make test
+    after_script:
       - make standalone-down
       - make prune
