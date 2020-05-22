@@ -28,7 +28,6 @@ dependencies {
     //implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
 
     // cloud
-    //implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
     implementation('org.springframework.cloud:spring-cloud-starter-consul-all')
 
     // config properties processor
