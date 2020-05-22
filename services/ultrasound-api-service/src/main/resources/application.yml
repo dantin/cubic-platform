@@ -1,7 +1,7 @@
 server:
   port: ${SERVER_PORT:0}
   servlet:
-    context-path: /ultrasound
+    context-path: /
 
 keycloak:
   realm: ultrasound
@@ -16,16 +16,6 @@ keycloak:
 spring:
   application:
     name: ultrasound-api-service
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 15
-    service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
 
 logging:
   level:

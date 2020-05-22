@@ -25,9 +25,7 @@ import org.springframework.util.MultiValueMap;
 import redis.embedded.RedisServer;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    value = {"eureka.client.enabled:false"},
-    webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @SqlGroup({
   @Sql(scripts = "/schema.sql", config = @SqlConfig(transactionMode = TransactionMode.ISOLATED)),
   @Sql(scripts = "/init-data.sql")

@@ -8,37 +8,22 @@ spring:
     gateway:
       routes:
         - id: ultrasound-api-service
-          uri: lb://ultrasound-api-service/ultrasound
+          uri: lb://ultrasound-api-service
           predicates:
             - Path=/ultrasound/**
+          filters:
+            - RewritePath=/ultrasound/(?<path>.*), /$\{path}
         - id: chat-api-service
-          uri: lb://chat-api-service/chat
+          uri: lb://chat-api-service
           predicates:
             - Path=/chat/**
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 15
-    service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+          filters:
+            - RewritePath=/chat/(?<path>.*), /$\{path}
 
 logging:
   level:
     ROOT: info
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: info, health
-  metrics:
-    export:
-      atlas:
-        enabled: false
 ---
 # For development in docker container
 spring:

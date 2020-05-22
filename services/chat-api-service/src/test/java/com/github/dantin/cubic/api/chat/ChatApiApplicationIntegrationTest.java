@@ -30,9 +30,7 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(
-    value = {"eureka.client.enabled:false"},
-    webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ChatApiApplicationIntegrationTest {
 
   private static final String SEND_STATUS_ENDPOINT = "/api/message.joinUser";
@@ -48,7 +46,7 @@ public class ChatApiApplicationIntegrationTest {
   @Before
   public void setUp() {
     this.completableFuture = new CompletableFuture<>();
-    this.endpoint = "ws://localhost:" + port + "/chat/ws";
+    this.endpoint = "ws://localhost:" + port + "/ws";
   }
 
   @Test

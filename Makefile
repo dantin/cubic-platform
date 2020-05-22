@@ -52,6 +52,7 @@ images: jar
 init:
 	@docker volume create postgres_database
 	@docker volume create redis_database
+	@docker network create cubic_net
 
 .PHONY: env-up
 env-up:
@@ -73,3 +74,4 @@ standalone-down:
 prune:
 	@docker volume rm redis_database
 	@docker volume rm postgres_database
+	@docker network rm cubic_net

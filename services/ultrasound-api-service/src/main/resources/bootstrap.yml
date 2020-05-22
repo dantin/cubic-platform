@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ultrasound-api-service
+  cloud:
+    consul:
+      discovery:
+        instance-id: "${spring.application.name}-${spring.cloud.client.hostname}-${random.int[1,999999]}"
+      host: ${CONSUL_CLUSTER:localhost}
+      port: 8500
