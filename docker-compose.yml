@@ -24,7 +24,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
   consul-server-1: &consul-server
-    image: consul:latest
+    image: consul:1.7.3
     networks:
       - cubic_net
     command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
