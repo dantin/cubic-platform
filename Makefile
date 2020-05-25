@@ -48,6 +48,26 @@ images: jar
 		  cd $(SOURCE_DIR)/$$subdir; docker build --force-rm -t cubic/$$m .; \
 		done
 
+.PHONY: publish-images
+publish-images:
+	@for subdir in $(SERVICES); \
+		do \
+		  m=`echo $$subdir | cut -d/ -f 2`; \
+		  remote_image=`echo "dding/usapp-"$$m`; \
+		  docker tag cubic/$$m $$remote_image; \
+		  docker push $$remote_image; \
+		done
+
+.PHONY: prune-images
+prune-images:
+	@for subdir in $(SERVICES); \
+		do \
+		  m=`echo $$subdir | cut -d/ -f 2`; \
+		  local_image=`echo "dding/usapp-"$$m`; \
+		  docker tag cubic/$$m $$remote_image; \
+		  docker image rmi -f $$local_image; \
+		done
+
 .PHONY: init
 init:
 	@docker volume create postgres_database
