@@ -53,6 +53,7 @@ jobs:
       - make image
       - make images
     script:
+      - version=$(git describe --tags `git rev-list --tags --max-count=1`)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - make publish-images
-      - make prune-images
+      - TAG_VERSION=$version make publish-images
+      - TAG_VERSION=$version make prune-images
