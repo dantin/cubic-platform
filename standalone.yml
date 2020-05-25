@@ -23,6 +23,18 @@ services:
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
     environment:
       - TZ=Asia/Shanghai
+  consul-server-1: &consul-server
+    image: consul:latest
+    command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
+  consul-server-2:
+    <<: *consul-server
+  consul-server-bootstrap:
+    <<: *consul-server
+    ports:
+      - 8500:8500
+      - 8600:8600
+      - 8600:8600/udp
+    command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
   keycloak:
     image: jboss/keycloak:8.0.0
     volumes:
@@ -42,84 +54,75 @@ services:
       - TZ=Asia/Shanghai
     depends_on:
       - postgres
-  discovery-service:
-    image: cubic/discovery-service:latest
-    restart: always
-    ports:
-      - 8761:8761
-    command: >
-      sh -c "java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
-    environment:
-      - TZ=Asia/Shanghai
   shm-service:
     image: cubic/shm-service:latest
     restart: always
     command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+      sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - CONSUL_CLUSTER=consul-server-bootstrap
       - SERVER_PORT=8080
     depends_on:
-      - discovery-service
+      - consul-server-bootstrap
   room-service:
     image: cubic/room-service:latest
     restart: always
     command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
-             ./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
+      sh -c "./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
              ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             ./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - CONSUL_CLUSTER=consul-server-bootstrap
       - REDIS_SERVER_HOST=redis
       - SERVER_PORT=8080
     depends_on:
-      - discovery-service
       - postgres
       - redis
+      - consul-server-bootstrap
   ultrasound-api-service:
     image: cubic/ultrasound-api-service:latest
     restart: always
     command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+      sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              ./wait-for room-service:8080 -t 1000 -- echo 'room-service is up' &&
              ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - CONSUL_CLUSTER=consul-server-bootstrap
       - AUTH_SERVER_URL=http://keycloak:8080/auth
       - SERVER_PORT=8080
     depends_on:
-      - discovery-service
+      - consul-server-bootstrap
       - keycloak
       - room-service
   chat-api-service:
     image: cubic/chat-api-service:latest
     restart: always
     command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
-             ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+      sh -c "./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             ./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
     environment:
       - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - CONSUL_CLUSTER=consul-server-bootstrap
       - AUTH_SERVER_URL=http://keycloak:8080/auth
       - REDIS_SERVER_HOST=redis
       - SERVER_PORT=8080
     depends_on:
-      - discovery-service
-      - keycloak
       - redis
+      - consul-server-bootstrap
+      - keycloak
   gateway-service:
     image: cubic/gateway-service:latest
     restart: always
     command: >
-      sh -c "./wait-for discovery-service:8761 -t 1000 -- echo 'discovery-service is up' &&
+      sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              ./wait-for ultrasound-api-service:8080 -t 1000 -- echo 'ultrasound-api-service is up' &&
              ./wait-for chat-api-service:8080 -t 1000 -- echo 'chat-api-service is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
@@ -127,9 +130,9 @@ services:
       - 8080:8080
     environment:
       - TZ=Asia/Shanghai
-      - EUREKA_SERVER=http://discovery-service:8761/eureka/
+      - CONSUL_CLUSTER=consul-server-bootstrap
     depends_on:
-      - discovery-service
+      - consul-server-bootstrap
       - ultrasound-api-service
       - chat-api-service
 

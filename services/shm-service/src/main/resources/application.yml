@@ -10,16 +10,6 @@ spring:
   application:
     name: shm-service
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 15
-    service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
-
 ---
 # For development in docker container
 spring:

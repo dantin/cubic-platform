@@ -30,7 +30,7 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     // cloud
-    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    implementation('org.springframework.cloud:spring-cloud-starter-consul-all')
     // security
     //implementation("org.springframework.boot:spring-boot-starter-security")
     //implementation("org.keycloak:keycloak-spring-boot-starter")
