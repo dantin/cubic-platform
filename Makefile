@@ -1,8 +1,9 @@
 # enable BASH-specific features
 SHELL := /bin/bash
 
-SOURCE_DIR := $(shell pwd)
+SOURCE_DIR  := $(shell pwd)
 SERVICE_DIR := services
+TAG_VERSION ?= "latest"
 
 SERVICES := $(foreach dir, $(SERVICE_DIR), $(wildcard $(SERVICE_DIR)/*))
 
@@ -53,9 +54,9 @@ publish-images:
 	@for subdir in $(SERVICES); \
 		do \
 		  m=`echo $$subdir | cut -d/ -f 2`; \
-		  remote_image=`echo "dding/usapp-"$$m`; \
-		  docker tag cubic/$$m $$remote_image; \
-		  docker push $$remote_image; \
+		  tag=`echo "dding/usapp-"$$m":${TAG_VERSION}"`; \
+		  docker tag cubic/$$m $$tag; \
+		  docker push $$tag; \
 		done
 
 .PHONY: prune-images
@@ -63,9 +64,8 @@ prune-images:
 	@for subdir in $(SERVICES); \
 		do \
 		  m=`echo $$subdir | cut -d/ -f 2`; \
-		  local_image=`echo "dding/usapp-"$$m`; \
-		  docker tag cubic/$$m $$remote_image; \
-		  docker image rmi -f $$local_image; \
+		  tag=`echo "dding/usapp-"$$m":${TAG_VERSION}"`; \
+		  docker rmi -f $$tag; \
 		done
 
 .PHONY: init

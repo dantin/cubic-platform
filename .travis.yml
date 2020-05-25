@@ -43,6 +43,7 @@ jobs:
       - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9990/auth/admin/master/console/)" != "200" ]]; do sleep 5 && echo "wait for keycloak"; done' || false
       - timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 5 && echo "wait for gateway"; done' || false
       - make test
+      - echo "$TRAVIS_TAG"
     after_script:
       - make standalone-down
       - make prune
