@@ -20,12 +20,9 @@ dependencies {
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    //implementation("org.springframework.boot:spring-boot-devtools")
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.keycloak:keycloak-spring-boot-starter")
-    //implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    //implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE")
 
     // cloud
     implementation('org.springframework.cloud:spring-cloud-starter-consul-all')
@@ -37,6 +34,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.rest-assured:rest-assured")
-    //testImplementation("com.tngtech.keycloakmock:mock:${keycloakMockVersion}")
-    testImplementation("org.mockito:mockito-core:3.1.0")
+    testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 }
