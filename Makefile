@@ -1,8 +1,9 @@
 # enable BASH-specific features
 SHELL := /bin/bash
 
-SOURCE_DIR := $(shell pwd)
+SOURCE_DIR  := $(shell pwd)
 SERVICE_DIR := services
+TAG_VERSION ?= "latest"
 
 SERVICES := $(foreach dir, $(SERVICE_DIR), $(wildcard $(SERVICE_DIR)/*))
 
@@ -46,6 +47,25 @@ images: jar
 		  m=`echo $$subdir | cut -d/ -f 2`; \
 		  echo -e "\n==> build docker image for '$$m' <==\n"; \
 		  cd $(SOURCE_DIR)/$$subdir; docker build --force-rm -t cubic/$$m .; \
+		done
+
+.PHONY: publish-images
+publish-images:
+	@for subdir in $(SERVICES); \
+		do \
+		  m=`echo $$subdir | cut -d/ -f 2`; \
+		  tag=`echo "dding/usapp-"$$m":${TAG_VERSION}"`; \
+		  docker tag cubic/$$m $$tag; \
+		  docker push $$tag; \
+		done
+
+.PHONY: prune-images
+prune-images:
+	@for subdir in $(SERVICES); \
+		do \
+		  m=`echo $$subdir | cut -d/ -f 2`; \
+		  tag=`echo "dding/usapp-"$$m":${TAG_VERSION}"`; \
+		  docker rmi -f $$tag; \
 		done
 
 .PHONY: init

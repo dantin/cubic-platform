@@ -23,7 +23,7 @@ jobs:
       - make env-down
       - make prune
 
-  - stage: integration-tests
+  - stage: test
     before_install:
       - REPO_DIR=`pwd`
       - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
@@ -46,3 +46,14 @@ jobs:
     after_script:
       - make standalone-down
       - make prune
+
+  - stage: publish
+    if: tag IS present
+    install:
+      - make image
+      - make images
+    script:
+      - version=$(git describe --tags `git rev-list --tags --max-count=1`)
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - TAG_VERSION=$version make publish-images
+      - TAG_VERSION=$version make prune-images
