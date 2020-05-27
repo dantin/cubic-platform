@@ -11,7 +11,7 @@ spring:
   application:
     name: chat-api-service
   rabbitmq:
-    host: ${RABBIT_MQ_HOST:localhost}
+    host: ${RABBITMQ_HOST:localhost}
     port: 5672
     username: cubic
     password: password

@@ -34,6 +34,7 @@ jobs:
       - make standalone-up
       - ./wait-for localhost:5432 -t 1000 -- echo 'postgres is up'
       - ./wait-for localhost:6379 -t 1000 -- echo 'redis is up'
+      - ./wait-for localhost:15678 -t 1000 -- echo 'rabbitmq is up'
       - ./wait-for localhost:8500 -t 1000 -- echo 'consul cluster is up'
       - ./wait-for localhost:9990 -t 1000 -- echo 'keycloak http is up'
       - ./wait-for localhost:9991 -t 1000 -- echo 'keycloak https is up'

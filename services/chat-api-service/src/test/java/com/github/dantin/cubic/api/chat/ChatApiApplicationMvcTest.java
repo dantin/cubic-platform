@@ -31,7 +31,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ChatApiApplicationIntegrationTest {
+public class ChatApiApplicationMvcTest {
 
   private static final String SEND_STATUS_ENDPOINT = "/api/message.joinUser";
   private static final String SEND_MESSAGE_ENDPOINT = "/api/message.sendMessage";
