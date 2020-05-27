@@ -67,7 +67,7 @@ public class ChatApiApplicationMvcTest {
     stompSession.subscribe(SUBSCRIBE_STATUS_ENDPOINT, new ChatMessageStompFrameHandler());
     stompSession.send(SEND_STATUS_ENDPOINT, body);
 
-    ChatMessage chatMessage = completableFuture.get(10, TimeUnit.SECONDS);
+    ChatMessage chatMessage = completableFuture.get(20, TimeUnit.SECONDS);
     assertNotNull(chatMessage);
   }
 
