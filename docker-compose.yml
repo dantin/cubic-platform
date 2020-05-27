@@ -54,9 +54,22 @@ services:
       - TZ=Asia/Shanghai
     depends_on:
       - postgres
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=cubic
+      - RABBITMQ_DEFAULT_PASS=password
+      - TZ=Asia/Shanghai
+    volumes:
+      - rabbitmq_data:/data
 
 volumes:
   postgres_database:
     external: true
   redis_database:
+    external: true
+  rabbitmq_data:
     external: true

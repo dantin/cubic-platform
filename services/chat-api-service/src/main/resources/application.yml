@@ -3,16 +3,18 @@ server:
   servlet:
     context-path: /
 
-channel:
-  broadcast: websocket.broadcast
-  userStatus: websocket.userStatus
-
-status:
-  onlineUserKey: onlineUsers
+customized:
+  redis-key:
+    online-user: onlineUsers
 
 spring:
   application:
     name: chat-api-service
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: 5672
+    username: cubic
+    password: password
   redis:
     database: 1
     host: ${REDIS_SERVER_HOST:localhost}
