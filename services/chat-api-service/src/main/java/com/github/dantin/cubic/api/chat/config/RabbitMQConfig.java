@@ -1,5 +1,6 @@
 package com.github.dantin.cubic.api.chat.config;
 
+import com.github.dantin.cubic.api.chat.service.MessageService.TopicRoute;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Declarables;
 import org.springframework.amqp.core.Queue;
