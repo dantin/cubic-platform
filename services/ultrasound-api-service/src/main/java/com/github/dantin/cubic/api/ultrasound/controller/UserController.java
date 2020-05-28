@@ -2,6 +2,7 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.base.CollectionsHelper;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -30,7 +31,9 @@ public class UserController extends BaseController {
 
     String username = super.getUsername();
     LOGGER.debug("found user '{}' in security context", username);
+    Set<String> roles = super.getResourceAccess();
 
-    return ResponseEntity.ok(CollectionsHelper.mapOf("username", username));
+    return ResponseEntity.ok(
+        CollectionsHelper.mapOf("username", username, "roles", String.join(",", roles)));
   }
 }
