@@ -23,6 +23,17 @@ services:
       - "${CODE_PATH}/data/redis-entrypoint/redis.conf:/usr/local/etc/redis/redis.conf"
     environment:
       - TZ=Asia/Shanghai
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=cubic
+      - RABBITMQ_DEFAULT_PASS=password
+      - TZ=Asia/Shanghai
+    volumes:
+      - rabbitmq_data:/data
   consul-server-1: &consul-server
     image: consul:latest
     command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
@@ -105,6 +116,7 @@ services:
     restart: always
     command: >
       sh -c "./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
+             ./wait-for rabbitmq:5672 -t 1000 -- echo 'rabbitmq is up' &&
              ./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
              ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
@@ -113,9 +125,11 @@ services:
       - CONSUL_CLUSTER=consul-server-bootstrap
       - AUTH_SERVER_URL=http://keycloak:8080/auth
       - REDIS_SERVER_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
       - SERVER_PORT=8080
     depends_on:
       - redis
+      - rabbitmq
       - consul-server-bootstrap
       - keycloak
   gateway-service:
@@ -140,4 +154,6 @@ volumes:
   postgres_database:
     external: true
   redis_database:
+    external: true
+  rabbitmq_data:
     external: true

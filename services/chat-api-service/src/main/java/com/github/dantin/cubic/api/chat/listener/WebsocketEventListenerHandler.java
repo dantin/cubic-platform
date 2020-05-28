@@ -2,12 +2,12 @@ package com.github.dantin.cubic.api.chat.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dantin.cubic.api.chat.config.ChannelProperties;
+import com.github.dantin.cubic.api.chat.config.CustomizedKeyProperties;
+import com.github.dantin.cubic.api.chat.service.MessageService;
 import com.github.dantin.cubic.protocol.chat.ChatMessage;
 import com.github.dantin.cubic.protocol.chat.ChatMessage.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,26 +17,28 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 @Component
-@EnableConfigurationProperties(ChannelProperties.class)
+@EnableConfigurationProperties(CustomizedKeyProperties.class)
 public class WebsocketEventListenerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(WebsocketEventListenerHandler.class);
 
-  private final ChannelProperties channelProperties;
+  private final CustomizedKeyProperties customizedKeyProperties;
 
   private final RedisTemplate<String, String> redisTemplate;
 
+  private final MessageService messageService;
+
   private final ObjectMapper objectMapper;
 
-  @Value("${status.onlineUserKey:onlineUsers}")
-  private String onlineUser;
-
+  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
   public WebsocketEventListenerHandler(
-      ChannelProperties channelProperties,
+      CustomizedKeyProperties customizedKeyProperties,
       RedisTemplate<String, String> redisTemplate,
+      MessageService messageService,
       ObjectMapper objectMapper) {
-    this.channelProperties = channelProperties;
+    this.customizedKeyProperties = customizedKeyProperties;
     this.redisTemplate = redisTemplate;
+    this.messageService = messageService;
     this.objectMapper = objectMapper;
   }
 
@@ -60,9 +62,9 @@ public class WebsocketEventListenerHandler {
       message.setSender(username);
 
       try {
-        redisTemplate.opsForSet().remove(onlineUser, username);
+        redisTemplate.opsForSet().remove(customizedKeyProperties.getOnlineUser(), username);
         String json = objectMapper.writeValueAsString(message);
-        redisTemplate.convertAndSend(channelProperties.getUserStatus(), json);
+        messageService.updateStatus(json);
       } catch (JsonProcessingException e) {
         LOGGER.warn("fail to serialize message to json on user {} disconnecting", username, e);
       }

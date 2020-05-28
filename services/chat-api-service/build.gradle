@@ -18,6 +18,7 @@ dependencies {
     // web
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-redis") {
         // by default Spring Boot 2.0 use Lettuce, to use Jedis we need to exclude Lettuce
@@ -25,6 +26,11 @@ dependencies {
         exclude group: "io.lettuce", module: "lettuce-core"
     }
     implementation("redis.clients:jedis")
+
+    // security
+    //implementation("org.springframework.boot:spring-boot-starter-security")
+    //implementation("org.keycloak:keycloak-spring-boot-starter")
+
     // config properties processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

@@ -72,6 +72,7 @@ prune-images:
 init:
 	@docker volume create postgres_database
 	@docker volume create redis_database
+	@docker volume create rabbitmq_data
 
 .PHONY: env-up
 env-up:
@@ -93,3 +94,4 @@ standalone-down:
 prune:
 	@docker volume rm redis_database
 	@docker volume rm postgres_database
+	@docker volume rm rabbitmq_data

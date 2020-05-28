@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /
 
+customized:
+  uid:
+    worker-id: ${WORKER_ID:1}
+
 spring:
   application:
     name: room-service
