@@ -1,12 +1,16 @@
 package com.github.dantin.cubic.gateway;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.base.CollectionsHelper;
 import com.github.dantin.cubic.protocol.chat.ChatMessage;
 import com.github.dantin.cubic.protocol.chat.ChatMessage.MessageType;
+import com.github.dantin.cubic.protocol.ultrasound.Token;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import java.lang.reflect.Type;
@@ -20,6 +24,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -36,6 +41,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 // need all services to be running.
 public class GatewayIntegrationTest {
 
+  private final ObjectMapper MAPPER = new ObjectMapper();
   private static final String SEND_STATUS_ENDPOINT = "/api/message.joinUser";
   private static final String SEND_MESSAGE_ENDPOINT = "/api/message.sendMessage";
   private static final String SUBSCRIBE_STATUS_ENDPOINT = "/topic/public";
@@ -58,64 +64,70 @@ public class GatewayIntegrationTest {
 
   @Test
   public void doLogin_thenSuccess() {
-    String accessToken = obtainAccessToken("room01", "password");
-    assertThat(accessToken).isNotBlank();
+    Token token = login("room01", "password");
+    assertNotNull(token);
+    Token updatedToken = refreshToken(token);
+    assertNotNull(updatedToken);
+    assertNotEquals(token.getAccessToken(), updatedToken.getAccessToken());
+    logout(updatedToken);
   }
 
   @Test
   public void userRetrieveRoom_thenSuccess() {
-    String accessToken = obtainAccessToken("room01", "password");
+    Token token = login("room01", "password");
 
     String url = "/ultrasound/room";
     Response response =
         RestAssured.given()
-            .header("Authorization", "Bearer " + accessToken)
+            .header("Authorization", bearerHeader(token.getAccessToken()))
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
 
     assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
     assertThat(response.jsonPath().getMap("$.")).containsKeys("id", "room", "streams");
+    logout(token);
   }
 
   @Test
   public void userListRoom_thenFail() {
-    String accessToken = obtainAccessToken("room01", "password");
+    Token token = login("room01", "password");
 
     String url = "/ultrasound/room/list";
     RestAssured.given()
-        .header("Authorization", "Bearer " + accessToken)
+        .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .get(url)
         .then()
         .statusCode(HttpStatus.FORBIDDEN.value());
+    logout(token);
   }
 
   @Test
   public void adminListRoom_thenSuccess() {
-    String accessToken = obtainAccessToken("admin", "password");
+    Token token = login("admin", "password");
 
     // default list
     String url = "/ultrasound/room/list";
     Response response =
         RestAssured.given()
-            .header("Authorization", "Bearer " + accessToken)
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
     assertThat(response.jsonPath().getMap("$."))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
 
     // list by page
     response =
         RestAssured.given()
-            .header("Authorization", "Bearer " + accessToken)
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
             .queryParam("n", "1")
             .queryParam("s", "4")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
     assertThat(response.jsonPath().getMap("$."))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
     assertThat(response.jsonPath().getString("size")).isEqualTo("4");
@@ -126,13 +138,13 @@ public class GatewayIntegrationTest {
 
     response =
         RestAssured.given()
-            .header("Authorization", "Bearer " + accessToken)
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
             .queryParam("n", "2")
             .queryParam("s", "4")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
     assertThat(response.jsonPath().getMap("$."))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
     assertThat(response.jsonPath().getString("size")).isEqualTo("1");
@@ -140,9 +152,10 @@ public class GatewayIntegrationTest {
     assertThat(response.jsonPath().getString("pages")).isEqualTo("2");
     assertThat(response.jsonPath().getString("has_next")).isEqualTo("false");
     assertThat(response.jsonPath().getString("has_previous")).isEqualTo("true");
+    logout(token);
   }
 
-  private String obtainAccessToken(String username, String password) {
+  private Token login(String username, String password) {
     JSONObject json = null;
     try {
       json = new JSONObject().put("username", username).put("password", password);
@@ -156,7 +169,49 @@ public class GatewayIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(json.toString())
             .post(url);
-    return response.jsonPath().getString("access_token");
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+    String accessToken = response.jsonPath().getString("access_token");
+    assertThat(accessToken).isNotEmpty();
+    String refreshToken = response.jsonPath().getString("refresh_token");
+    assertThat(refreshToken).isNotEmpty();
+
+    Token token = new Token();
+    token.setAccessToken(accessToken);
+    token.setRefreshToken(refreshToken);
+    return token;
+  }
+
+  private Token refreshToken(Token token) {
+    String url = "/ultrasound/auth/refresh";
+    Response response =
+        RestAssured.given()
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(asJsonString(token))
+            .post(url);
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+    String accessToken = response.jsonPath().getString("access_token");
+    assertThat(accessToken).isNotEmpty();
+    String refreshToken = response.jsonPath().getString("refresh_token");
+    assertThat(refreshToken).isNotEmpty();
+
+    Token updatedToken = new Token();
+    updatedToken.setAccessToken(accessToken);
+    updatedToken.setRefreshToken(refreshToken);
+    return updatedToken;
+  }
+
+  private void logout(Token token) {
+    String url = "/ultrasound/auth/logout";
+    Response response =
+        RestAssured.given()
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(asJsonString(token))
+            .post(url);
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode());
   }
 
   @Test
@@ -196,6 +251,18 @@ public class GatewayIntegrationTest {
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
       completableFuture.complete((ChatMessage) payload);
+    }
+  }
+
+  private String bearerHeader(String accessToken) {
+    return String.format("Bearer %s", accessToken);
+  }
+
+  private String asJsonString(final Object obj) {
+    try {
+      return MAPPER.writeValueAsString(obj);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 }

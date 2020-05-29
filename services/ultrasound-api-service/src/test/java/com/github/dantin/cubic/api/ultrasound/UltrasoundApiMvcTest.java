@@ -223,14 +223,6 @@ public class UltrasoundApiMvcTest {
     logout(token);
   }
 
-  private String asJsonString(final Object obj) {
-    try {
-      return MAPPER.writeValueAsString(obj);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private Token login(String username) {
     String url = String.format("/auth/realms/%s/protocol/openid-connect/token", realm);
     // obtain authentication url with custom code

@@ -64,7 +64,7 @@ public class AuthController extends BaseController {
 
     try {
       authService.logout(context.getTokenString(), request.getRefreshToken());
-      return ResponseEntity.ok().build();
+      return ResponseEntity.noContent().build();
     } catch (BusinessException e) {
       LOGGER.warn("refresh token failed", e);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
