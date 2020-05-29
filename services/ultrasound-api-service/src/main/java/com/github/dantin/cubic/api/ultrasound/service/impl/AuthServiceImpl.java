@@ -48,7 +48,6 @@ public class AuthServiceImpl implements AuthService {
     params.add("client_id", clientId);
     params.add("grant_type", "password");
     params.add("client_secret", clientSecret);
-    params.add("scope", "password");
     params.add("username", username);
     params.add("password", password);
 
@@ -92,7 +91,6 @@ public class AuthServiceImpl implements AuthService {
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     headers.setBearerAuth(accessToken);
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
     params.add("client_id", clientId);
     params.add("client_secret", clientSecret);
     params.add("refresh_token", refreshToken);

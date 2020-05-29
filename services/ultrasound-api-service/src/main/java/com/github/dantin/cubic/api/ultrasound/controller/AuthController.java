@@ -3,7 +3,7 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 import com.github.dantin.cubic.api.ultrasound.service.AuthService;
 import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
-import com.github.dantin.cubic.protocol.ultrasound.RefreshTokenRequest;
+import com.github.dantin.cubic.protocol.ultrasound.Token;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import org.keycloak.KeycloakSecurityContext;
@@ -43,7 +43,7 @@ public class AuthController extends BaseController {
 
   @PostMapping("/refresh")
   @RolesAllowed({"ultrasound-user", "ultrasound-admin", "ultrasound-root"})
-  public ResponseEntity<String> refreshToken(@RequestBody RefreshTokenRequest request) {
+  public ResponseEntity<String> refreshToken(@RequestBody Token request) {
     String username = super.getUsername();
     LOGGER.info("refresh token triggered by '{}'", username);
     try {
@@ -57,7 +57,7 @@ public class AuthController extends BaseController {
 
   @PostMapping("/logout")
   @RolesAllowed({"ultrasound-user", "ultrasound-admin", "ultrasound-root"})
-  public ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request) {
+  public ResponseEntity<String> logout(@RequestBody Token request) {
     String username = super.getUsername();
     LOGGER.info("logout triggered by '{}'", username);
     KeycloakSecurityContext context = getKeycloakSecurityContext();
