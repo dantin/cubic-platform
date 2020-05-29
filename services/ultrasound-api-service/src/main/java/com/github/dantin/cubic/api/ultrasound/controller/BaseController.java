@@ -24,7 +24,7 @@ public class BaseController {
     this.request = request;
   }
 
-  private KeycloakSecurityContext getKeycloakSecurityContext() {
+  protected KeycloakSecurityContext getKeycloakSecurityContext() {
     KeycloakSecurityContext context =
         (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
     if (Objects.isNull(context) || Objects.isNull(context.getToken())) {
