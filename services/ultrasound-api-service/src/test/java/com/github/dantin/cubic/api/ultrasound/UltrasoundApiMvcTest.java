@@ -14,7 +14,7 @@ import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
 import com.github.dantin.cubic.protocol.room.Stream;
-import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
+import com.github.dantin.cubic.protocol.ultrasound.Token;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import java.util.UUID;
@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -66,30 +67,22 @@ public class UltrasoundApiMvcTest {
   public void init() {
     // .alwaysDo(print())
     mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+
+    RestAssured.baseURI = "http://localhost";
+    RestAssured.port = 9990;
   }
 
   @Test
   public void doLogin_thenSuccess() throws Exception {
-    LoginRequest loginRequest = new LoginRequest();
-    loginRequest.setUsername("room01");
-    loginRequest.setPassword("password");
-    MvcResult result =
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(loginRequest)))
-            .andExpect(status().isOk())
-            .andReturn();
-    String resultString = result.getResponse().getContentAsString();
-    assertNotNull(resultString);
+    String username = "room01";
+    Token token = login(username);
+    logout(token);
   }
 
   @Test
   public void getRoom_thenSuccess() throws Exception {
     final String username = "room01";
-    String accessToken = obtainMockAccessToken(username);
+    Token token = login(username);
 
     // mock data
     Route.Builder builder = Route.builder().id("1").name("route 1");
@@ -125,7 +118,7 @@ public class UltrasoundApiMvcTest {
         mockMvc
             .perform(
                 MockMvcRequestBuilders.request(HttpMethod.GET, "/room")
-                    .header(HttpHeaders.AUTHORIZATION, accessToken)
+                    .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
@@ -137,13 +130,17 @@ public class UltrasoundApiMvcTest {
     assertThat(route.getId(), is(orig.getId()));
     assertThat(route.getName(), is(orig.getName()));
     assertEquals(2, route.getStreams().size());
+
+    logout(token);
   }
 
   @Test
   public void listRoomByPage_thenSuccess() throws Exception {
-    String accessToken = obtainMockAccessToken("admin");
-    listRoomByPage(accessToken, 1, 8, 10);
-    listRoomByPage(accessToken, 2, 4, 4);
+    String username = "admin";
+    Token token = login(username);
+    listRoomByPage(token.getAccessToken(), 1, 8, 10);
+    listRoomByPage(token.getAccessToken(), 2, 4, 4);
+    logout(token);
   }
 
   private void listRoomByPage(String accessToken, int page, int size, int pages) throws Exception {
@@ -189,7 +186,7 @@ public class UltrasoundApiMvcTest {
         mockMvc
             .perform(
                 MockMvcRequestBuilders.request(HttpMethod.GET, "/room/list")
-                    .header(HttpHeaders.AUTHORIZATION, accessToken)
+                    .header(HttpHeaders.AUTHORIZATION, bearerHeader(accessToken))
                     .accept(MediaType.APPLICATION_JSON)
                     .params(params))
             .andExpect(status().isOk())
@@ -209,7 +206,9 @@ public class UltrasoundApiMvcTest {
 
   @Test
   public void getUserProfile_thenSuccess() throws Exception {
-    String accessToken = obtainMockAccessToken("room01");
+    String username = "room01";
+    Token token = login(username);
+    String accessToken = bearerHeader(token.getAccessToken());
     MvcResult result =
         mockMvc
             .perform(
@@ -220,19 +219,12 @@ public class UltrasoundApiMvcTest {
             .andReturn();
     String resultString = result.getResponse().getContentAsString();
     assertNotNull(resultString);
+
+    logout(token);
   }
 
-  private String asJsonString(final Object obj) {
-    try {
-      return MAPPER.writeValueAsString(obj);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private String obtainMockAccessToken(String username) {
-    String url =
-        String.format("http://localhost:9990/auth/realms/%s/protocol/openid-connect/token", realm);
+  private Token login(String username) {
+    String url = String.format("/auth/realms/%s/protocol/openid-connect/token", realm);
     // obtain authentication url with custom code
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("client_id", clientId);
@@ -243,6 +235,36 @@ public class UltrasoundApiMvcTest {
 
     Response response = RestAssured.given().formParams(params).post(url);
 
-    return String.format("Bearer %s", response.jsonPath().getString("access_token"));
+    String accessToken = response.jsonPath().getString("access_token");
+    assertNotNull(accessToken);
+    String refreshToken = response.jsonPath().getString("refresh_token");
+    assertNotNull(refreshToken);
+
+    Token token = new Token();
+    token.setAccessToken(accessToken);
+    token.setRefreshToken(refreshToken);
+
+    return token;
+  }
+
+  private void logout(Token token) {
+    String url = String.format("/auth/realms/%s/protocol/openid-connect/logout", realm);
+    // obtain authentication url with custom code
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("client_id", clientId);
+    params.add("client_secret", clientSecret);
+    params.add("refresh_token", token.getRefreshToken());
+
+    Response response =
+        RestAssured.given()
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+            .formParams(params)
+            .post(url);
+
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode());
+  }
+
+  private String bearerHeader(String accessToken) {
+    return String.format("Bearer %s", accessToken);
   }
 }

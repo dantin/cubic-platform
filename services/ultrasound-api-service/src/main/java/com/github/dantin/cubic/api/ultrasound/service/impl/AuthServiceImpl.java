@@ -48,7 +48,6 @@ public class AuthServiceImpl implements AuthService {
     params.add("client_id", clientId);
     params.add("grant_type", "password");
     params.add("client_secret", clientSecret);
-    params.add("scope", "password");
     params.add("username", username);
     params.add("password", password);
 
@@ -62,5 +61,48 @@ public class AuthServiceImpl implements AuthService {
       throw new BusinessException("authentication failed");
     }
     return response.getBody();
+  }
+
+  @Override
+  public String refreshToken(String refreshToken) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("client_id", clientId);
+    params.add("grant_type", "refresh_token");
+    params.add("client_secret", clientSecret);
+    params.add("refresh_token", refreshToken);
+
+    HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
+    String tokenUrl =
+        String.format("%s/realms/%s/protocol/openid-connect/token", authServerUrl, realm);
+    ResponseEntity<String> response =
+        restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
+    if (!response.getStatusCode().is2xxSuccessful() || Objects.isNull(response.getBody())) {
+      LOGGER.warn("refresh token failed with status code {}", response.getStatusCode());
+      throw new BusinessException("authentication failed");
+    }
+    return response.getBody();
+  }
+
+  @Override
+  public void logout(String accessToken, String refreshToken) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    headers.setBearerAuth(accessToken);
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("client_id", clientId);
+    params.add("client_secret", clientSecret);
+    params.add("refresh_token", refreshToken);
+
+    HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
+    String tokenUrl =
+        String.format("%s/realms/%s/protocol/openid-connect/logout", authServerUrl, realm);
+    ResponseEntity<String> response =
+        restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      LOGGER.warn("logout failed with status code {}", response.getStatusCode());
+      throw new BusinessException("authentication failed");
+    }
   }
 }

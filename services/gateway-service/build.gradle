@@ -20,6 +20,7 @@ dependencies {
 
     // test
     testImplementation project(":protocol:chat-protocol")
+    testImplementation project(":protocol:ultrasound-protocol")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket")
     testImplementation("io.rest-assured:rest-assured")
