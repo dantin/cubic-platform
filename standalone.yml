@@ -99,6 +99,7 @@ services:
     restart: always
     command: >
       sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
+             ./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
              ./wait-for room-service:8080 -t 1000 -- echo 'room-service is up' &&
              ./wait-for keycloak:8080 -t 1000 -- echo 'keycloak is up' &&
              java -Djava.security.egd=file:/dev/urandom -Dspring.profiles.active=docker -jar app.jar"
@@ -106,9 +107,11 @@ services:
       - TZ=Asia/Shanghai
       - CONSUL_CLUSTER=consul-server-bootstrap
       - AUTH_SERVER_URL=http://keycloak:8080/auth
+      - REDIS_SERVER_HOST=redis
       - SERVER_PORT=8080
     depends_on:
       - consul-server-bootstrap
+      - redis
       - keycloak
       - room-service
   chat-api-service:
