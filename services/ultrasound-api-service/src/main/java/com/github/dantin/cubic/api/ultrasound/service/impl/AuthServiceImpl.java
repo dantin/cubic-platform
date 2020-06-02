@@ -2,11 +2,14 @@ package com.github.dantin.cubic.api.ultrasound.service.impl;
 
 import com.github.dantin.cubic.api.ultrasound.service.AuthService;
 import com.github.dantin.cubic.base.exception.BusinessException;
+import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,8 +38,10 @@ public class AuthServiceImpl implements AuthService {
   private String realm;
 
   private final RestTemplate restTemplate;
+  private final JsonParser jsonParser;
 
   public AuthServiceImpl(@Qualifier("edgeClient") RestTemplate restTemplate) {
+    this.jsonParser = JsonParserFactory.getJsonParser();
     this.restTemplate = restTemplate;
   }
 
@@ -104,5 +109,11 @@ public class AuthServiceImpl implements AuthService {
       LOGGER.warn("logout failed with status code {}", response.getStatusCode());
       throw new BusinessException("authentication failed");
     }
+  }
+
+  @Override
+  public int getExpires(String jsonString) {
+    Map<String, Object> body = jsonParser.parseMap(jsonString);
+    return (Integer) body.get("expires_in");
   }
 }

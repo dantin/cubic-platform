@@ -7,4 +7,6 @@ public interface AuthService {
   String refreshToken(String refreshToken);
 
   void logout(String accessToken, String refreshToken);
+
+  int getExpires(String jsonString);
 }
