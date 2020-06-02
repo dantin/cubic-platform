@@ -73,6 +73,31 @@ public class GatewayIntegrationTest {
   }
 
   @Test
+  public void reLogin_thenFail() {
+    String username = "room01";
+    String password = "password";
+    Token token = login(username, password);
+    assertNotNull(token);
+
+    JSONObject json = null;
+    try {
+      json = new JSONObject().put("username", username).put("password", password);
+    } catch (JSONException e) {
+      assertNull(e);
+    }
+
+    String url = "/ultrasound/auth/login";
+    Response response =
+        RestAssured.given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(json.toString())
+            .post(url);
+    assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+
+    logout(token);
+  }
+
+  @Test
   public void userRetrieveRoom_thenSuccess() {
     Token token = login("room01", "password");
 
