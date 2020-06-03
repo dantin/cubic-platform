@@ -28,8 +28,9 @@ dependencies {
     implementation("redis.clients:jedis")
 
     // security
-    //implementation("org.springframework.boot:spring-boot-starter-security")
-    //implementation("org.keycloak:keycloak-spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security:spring-security-messaging")
+    implementation("org.keycloak:keycloak-spring-boot-starter")
 
     // config properties processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

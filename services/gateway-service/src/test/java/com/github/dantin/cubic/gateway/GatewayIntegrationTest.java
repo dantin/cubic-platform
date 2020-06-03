@@ -32,6 +32,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -246,8 +247,17 @@ public class GatewayIntegrationTest {
         new WebSocketStompClient(new SockJsClient(createTransportClient()));
     stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
+    Token token = login("admin", "password");
+    StompHeaders handshakeHeader = new StompHeaders();
+    handshakeHeader.add(HttpHeaders.AUTHORIZATION, "Bearer " + token.getAccessToken());
     StompSession stompSession =
-        stompClient.connect(endpoint, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
+        stompClient
+            .connect(
+                endpoint,
+                new WebSocketHttpHeaders(),
+                handshakeHeader,
+                new StompSessionHandlerAdapter() {})
+            .get(3, TimeUnit.SECONDS);
 
     ChatMessage body = new ChatMessage();
     body.setType(MessageType.JOIN);
@@ -259,6 +269,7 @@ public class GatewayIntegrationTest {
 
     ChatMessage chatMessage = completableFuture.get(10, TimeUnit.SECONDS);
     assertNotNull(chatMessage);
+    logout(token);
   }
 
   private List<Transport> createTransportClient() {
