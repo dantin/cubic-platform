@@ -1,6 +1,6 @@
 package com.github.dantin.cubic.api.chat.config;
 
-import com.github.dantin.cubic.api.chat.auth.JWSAuthenticationToken;
+import com.github.dantin.cubic.api.chat.service.auth.JWSAuthenticationToken;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

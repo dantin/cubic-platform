@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.api.chat.auth;
+package com.github.dantin.cubic.api.chat.service.auth;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,8 +19,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-@Component
 @Qualifier("websocket")
+@Component
 public class KeycloakWebSocketAuthManager implements AuthenticationManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeycloakWebSocketAuthManager.class);

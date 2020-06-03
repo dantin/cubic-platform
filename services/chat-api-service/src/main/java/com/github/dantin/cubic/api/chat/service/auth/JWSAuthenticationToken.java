@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.api.chat.auth;
+package com.github.dantin.cubic.api.chat.service.auth;
 
 import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.User;
 
 public class JWSAuthenticationToken extends AbstractAuthenticationToken implements Authentication {
 
-  private String token;
-  private User principal;
+  private final String token;
+  private final User principal;
 
   public JWSAuthenticationToken(String token) {
     this(token, null, null);
