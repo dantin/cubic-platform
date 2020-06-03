@@ -1,6 +1,7 @@
 package com.github.dantin.cubic.api.chat.config;
 
 import com.github.dantin.cubic.api.chat.service.auth.JWSAuthenticationToken;
+import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
           public Message<?> preSend(Message<?> message, MessageChannel channel) {
             StompHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            if (Objects.nonNull(accessor) && StompCommand.CONNECT == accessor.getCommand()) {
               Optional.ofNullable(accessor.getNativeHeader(HttpHeaders.AUTHORIZATION))
                   .ifPresent(
                       ah -> {
