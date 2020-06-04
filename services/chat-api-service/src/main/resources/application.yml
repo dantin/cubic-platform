@@ -7,6 +7,16 @@ customized:
   redis-key:
     online-user: onlineUsers
 
+keycloak:
+  realm: ultrasound
+  auth-server-url: ${AUTH_SERVER_URL:http://localhost:9990/auth}
+  ssl-required: external
+  resource: chat_api_service
+  credentials:
+    secret: fad16a55-6b53-4c4f-8919-aeffe428752f
+  use-resource-role-mappings: true
+  bearer-only: true
+
 spring:
   application:
     name: chat-api-service
