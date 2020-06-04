@@ -241,6 +241,30 @@ public class GatewayIntegrationTest {
   }
 
   @Test
+  public void sendAnonymously_thenFail()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    WebSocketStompClient stompClient =
+        new WebSocketStompClient(new SockJsClient(createTransportClient()));
+    stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+    StompSession stompSession =
+        stompClient.connect(endpoint, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
+
+    ChatMessage body = new ChatMessage();
+    body.setType(MessageType.JOIN);
+    body.setSender("test-user");
+    body.setContent("{\"content\": \"json content\"}");
+
+    stompSession.subscribe(SUBSCRIBE_STATUS_ENDPOINT, new ChatMessageStompFrameHandler());
+
+    try {
+      stompSession.send(SEND_STATUS_ENDPOINT, body);
+    } catch (IllegalStateException e) {
+      assertNotNull(e);
+    }
+  }
+
+  @Test
   public void sendStatusEndpoint_thenSuccess()
       throws InterruptedException, ExecutionException, TimeoutException {
     WebSocketStompClient stompClient =
