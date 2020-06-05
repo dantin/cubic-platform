@@ -12,16 +12,8 @@ jobs:
   include:
   - stage: unit-tests
     before_install:
-      - REPO_DIR=`pwd`
-      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-      - echo "POSTGRES_TAG=11.5-alpine" >> $REPO_DIR/.env
-      - echo "REDIS_TAG=5.0.8-alpine" >> $REPO_DIR/.env
-      - echo "CONSUL_TAG=1.7.3" >> $REPO_DIR/.env
-      - echo "KEYCLOAK_TAG=8.0.0" >> $REPO_DIR/.env
-      - echo "RABBITMQ_TAG=3-management" >> $REPO_DIR/.env
-      - echo "CUBIC_TAG=latest" >> $REPO_DIR/.env
-    install:
       - make init
+    install:
       - make env-up
     script:
       - make unit-test
@@ -31,8 +23,7 @@ jobs:
 
   - stage: test
     before_install:
-      - REPO_DIR=`pwd`
-      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+      - make init
     install:
       - make image
       - make images

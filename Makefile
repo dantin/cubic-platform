@@ -77,8 +77,15 @@ prune-images:
 		  docker rmi -f $$tag; \
 		done
 
+.PHONY: setting
+setting:
+	@echo "building .env file"
+	@echo -e "CODE_PATH=$(SOURCE_DIR)" > .env
+	@cat env >> .env
+
 .PHONY: init
-init:
+init: setting
+	@echo "building docker volume"
 	@docker volume create postgres_database
 	@docker volume create redis_database
 	@docker volume create rabbitmq_data
