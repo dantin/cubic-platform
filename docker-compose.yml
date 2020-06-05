@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   postgres:
-    image: postgres:11.5-alpine
+    image: "postgres:${POSTGRES_TAG}"
     restart: always
     volumes:
       - postgres_database:/var/lib/postgresql/data
@@ -13,7 +13,7 @@ services:
       - POSTGRES_PASSWORD=password
       - TZ=Asia/Shanghai
   redis:
-    image: redis:5.0.8-alpine
+    image: "redis:${REDIS_TAG}"
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
@@ -24,7 +24,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
   consul-server-1: &consul-server
-    image: consul:1.7.3
+    image: "consul:${CONSUL_TAG}"
     command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
   consul-server-2:
     <<: *consul-server
@@ -36,7 +36,7 @@ services:
       - 8600:8600/udp
     command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
   keycloak:
-    image: jboss/keycloak:8.0.0
+    image: "jboss/keycloak:${KEYCLOAK_TAG}"
     volumes:
       - "${CODE_PATH}/data/keycloak/ultrasound-realm.json:/tmp/ultrasound-realm.json"
     ports:
@@ -55,7 +55,7 @@ services:
     depends_on:
       - postgres
   rabbitmq:
-    image: rabbitmq:3-management
+    image: "rabbitmq:${RABBITMQ_TAG}"
     ports:
       - 5672:5672
       - 15672:15672

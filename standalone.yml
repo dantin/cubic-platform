@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   postgres:
-    image: postgres:11.5-alpine
+    image: "postgres:${POSTGRES_TAG}"
     restart: always
     volumes:
       - postgres_database:/var/lib/postgresql/data
@@ -13,7 +13,7 @@ services:
       - POSTGRES_PASSWORD=password
       - TZ=Asia/Shanghai
   redis:
-    image: redis:5.0.8-alpine
+    image: "redis:${REDIS_TAG}"
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
@@ -24,7 +24,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
   rabbitmq:
-    image: rabbitmq:3-management
+    image: "rabbitmq:${RABBITMQ_TAG}"
     ports:
       - 5672:5672
       - 15672:15672
@@ -35,7 +35,7 @@ services:
     volumes:
       - rabbitmq_data:/data
   consul-server-1: &consul-server
-    image: consul:latest
+    image: "consul:${CONSUL_TAG}"
     command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
   consul-server-2:
     <<: *consul-server
@@ -47,7 +47,7 @@ services:
       - 8600:8600/udp
     command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
   keycloak:
-    image: jboss/keycloak:8.0.0
+    image: "jboss/keycloak:${KEYCLOAK_TAG}"
     volumes:
       - "${CODE_PATH}/data/keycloak/ultrasound-realm.json:/tmp/ultrasound-realm.json"
     ports:
@@ -66,7 +66,7 @@ services:
     depends_on:
       - postgres
   shm-service:
-    image: cubic/shm-service:latest
+    image: "cubic/shm-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
@@ -78,7 +78,7 @@ services:
     depends_on:
       - consul-server-bootstrap
   room-service:
-    image: cubic/room-service:latest
+    image: "cubic/room-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for postgres:5432 -t 1000 -- echo 'postgres is up' &&
@@ -95,7 +95,7 @@ services:
       - redis
       - consul-server-bootstrap
   ultrasound-api-service:
-    image: cubic/ultrasound-api-service:latest
+    image: "cubic/ultrasound-api-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
@@ -115,7 +115,7 @@ services:
       - keycloak
       - room-service
   chat-api-service:
-    image: cubic/chat-api-service:latest
+    image: "cubic/chat-api-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for redis:6379 -t 1000 -- echo 'redis is up' &&
@@ -136,7 +136,7 @@ services:
       - consul-server-bootstrap
       - keycloak
   gateway-service:
-    image: cubic/gateway-service:latest
+    image: "cubic/gateway-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&

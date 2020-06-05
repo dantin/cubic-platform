@@ -12,10 +12,8 @@ jobs:
   include:
   - stage: unit-tests
     before_install:
-      - REPO_DIR=`pwd`
-      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
-    install:
       - make init
+    install:
       - make env-up
     script:
       - make unit-test
@@ -25,8 +23,7 @@ jobs:
 
   - stage: test
     before_install:
-      - REPO_DIR=`pwd`
-      - echo "CODE_PATH=$REPO_DIR" > $REPO_DIR/.env
+      - make init
     install:
       - make image
       - make images

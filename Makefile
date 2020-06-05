@@ -19,6 +19,14 @@ fmt:
 cov:
 	@./gradlew jacocoTestReport
 
+.PHONY: dist
+dist:
+	@test -d dist || mkdir dist
+	@cat standalone.yml | sed -e 's/cubic\//dding\/usapp-/g' > dist/standalone.yml
+	@cp -r data dist
+	@zip -r dist.zip dist
+	@rm -rf dist
+
 .PHONY: unit-test
 unit-test: vet
 	@./gradlew test -PexcludeTests='**/GatewayIntegrationTest.class'
@@ -34,6 +42,7 @@ jar:
 .PHONY: clean
 clean:
 	@./gradlew clean
+	@rm -rf dist.zip
 
 .PHONY: image
 image:
@@ -68,8 +77,15 @@ prune-images:
 		  docker rmi -f $$tag; \
 		done
 
+.PHONY: setting
+setting:
+	@echo "building .env file"
+	@echo -e "CODE_PATH=$(SOURCE_DIR)" > .env
+	@cat env >> .env
+
 .PHONY: init
-init:
+init: setting
+	@echo "building docker volume"
 	@docker volume create postgres_database
 	@docker volume create redis_database
 	@docker volume create rabbitmq_data
