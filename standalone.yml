@@ -65,8 +65,8 @@ services:
       - TZ=Asia/Shanghai
     depends_on:
       - postgres
-  shm-service:
-    image: "cubic/shm-service:${CUBIC_TAG}"
+  smh-service:
+    image: "cubic/smh-service:${CUBIC_TAG}"
     restart: always
     command: >
       sh -c "./wait-for consul-server-bootstrap:8500 -t 1000 -- echo 'consul-cluster is up' &&
