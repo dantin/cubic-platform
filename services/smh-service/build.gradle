@@ -1,0 +1,34 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+
+archivesBaseName = 'smh-service'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation project(":shared:common-base")
+    implementation project(":protocol:common-protocol")
+
+    // config properties processor
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // web
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    implementation("org.apache.commons:commons-lang3:${commonsLang3Version}")
+    implementation("org.apache.httpcomponents:httpclient:${httpClientVersion}")
+
+    // cloud
+    implementation('org.springframework.cloud:spring-cloud-starter-consul-all')
+
+    // test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}

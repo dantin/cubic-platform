@@ -11,6 +11,6 @@ include 'protocol:ultrasound-protocol'
 
 include 'services:gateway-service'
 include 'services:room-service'
-include 'services:shm-service'
+include 'services:smh-service'
 include 'services:chat-api-service'
 include 'services:ultrasound-api-service'
