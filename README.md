@@ -35,7 +35,7 @@ The solution includes:
 
 You can clone the repository wherever you want.
 
-    $ git clone https://github.com/dantin/ultrasound-platform.git && cd ultrasound-platform
+    $ git clone https://github.com/dantin/cubic-platform.git && cd cubic-platform
     $ make image
     $ make images
 
@@ -57,7 +57,7 @@ This is only a documentation page. You can find out more on [here](docs/README.m
 
 Suggestions and improvements welcome!
 
-Free free to [Open an issue](https://github.com/dantin/ultrasound-platform/issues/new) or submit PRs.
+Feel free to [Open an issue](https://github.com/dantin/cubic-platform/issues/new) or submit PRs.
 
 ## License
 
