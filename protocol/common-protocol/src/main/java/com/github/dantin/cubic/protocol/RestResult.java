@@ -1,6 +1,7 @@
 package com.github.dantin.cubic.protocol;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.github.dantin.cubic.base.ResultCode;
 
 /** RestResult is the RESTFUL response body entity. */
 public class RestResult {
@@ -23,12 +24,12 @@ public class RestResult {
     return new Builder().resultCode(ResultCode.SUCCESS).data(data);
   }
 
-  public static Builder failure(ResultCode resultCode) {
-    return new Builder().resultCode(resultCode);
+  public static Builder failure() {
+    return new Builder().resultCode(ResultCode.UNKNOWN_SERVICE_ERROR);
   }
 
-  public static Builder failure(ResultCode resultCode, Object data) {
-    return new Builder().resultCode(resultCode).data(data);
+  public static Builder failure(ResultCode resultCode) {
+    return new Builder().resultCode(resultCode);
   }
 
   @JsonGetter("code")

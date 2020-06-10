@@ -2,6 +2,7 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.base.exception.BusinessException;
+import com.github.dantin.cubic.protocol.ResponseResult;
 import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/room")
+@ResponseResult
 public class RoomController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class);
@@ -32,7 +34,7 @@ public class RoomController extends BaseController {
 
   @GetMapping("/list")
   @RolesAllowed({"ultrasound-admin", "ultrasound-root"})
-  public ResponseEntity<RoutePage> listRoom(
+  public RoutePage listRoom(
       @RequestParam(value = "n", defaultValue = "1", required = false) int number,
       @RequestParam(value = "s", defaultValue = "8", required = false) int size) {
     LOGGER.info("list room by page");
@@ -58,10 +60,10 @@ public class RoomController extends BaseController {
                                 .collect(Collectors.toList()))
                         .build());
               });
-      return ResponseEntity.ok(builder.build());
+      return builder.build();
     } catch (BusinessException e) {
       LOGGER.warn("list room by page failed", e);
-      return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+      throw e;
     }
   }
 

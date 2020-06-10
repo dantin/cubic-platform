@@ -1,4 +1,4 @@
-package com.github.dantin.cubic.protocol;
+package com.github.dantin.cubic.base;
 
 /**
  * {@code ReturnCode} is the return code of resource server.
@@ -13,6 +13,7 @@ package com.github.dantin.cubic.protocol;
  */
 public enum ResultCode {
   SUCCESS(1, "success"),
+  FAILURE(2, "failure"),
   PARAM_IS_INVALID(1001, "parameter is invalid"),
   PARAM_IS_BLANK(1002, "parameter is blank"),
   PARAM_TYPE_ERROR(1003, "parameter type error"),
@@ -22,7 +23,8 @@ public enum ResultCode {
   USER_FORBIDDEN(2003, "account is forbidden"),
   USER_NOT_EXISTS(2004, "user not exists"),
   USER_IN_USE(2005, "user already login"),
-  SERVICE_ERROR(3001, "service internal error");
+  SERVICE_ERROR(3001, "service internal error"),
+  UNKNOWN_SERVICE_ERROR(3999, "unknown service error");
 
   ResultCode(Integer code, String message) {
     this.code = code;
