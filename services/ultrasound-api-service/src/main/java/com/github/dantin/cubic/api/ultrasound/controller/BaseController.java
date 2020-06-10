@@ -1,5 +1,6 @@
 package com.github.dantin.cubic.api.ultrasound.controller;
 
+import com.github.dantin.cubic.base.ResultCode;
 import com.github.dantin.cubic.base.exception.BusinessException;
 import com.google.common.base.Strings;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class BaseController {
         (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
     if (Objects.isNull(context) || Objects.isNull(context.getToken())) {
       LOGGER.warn("no security context or token found");
-      throw new BusinessException("username not set");
+      throw new BusinessException("username not set", ResultCode.PARAM_MISSING_ERROR);
     }
     return context;
   }
@@ -39,7 +40,7 @@ public class BaseController {
     String username = context.getToken().getPreferredUsername();
     if (Strings.isNullOrEmpty(username)) {
       LOGGER.warn("username not found in token");
-      throw new BusinessException("username null or empty");
+      throw new BusinessException("username null or empty", ResultCode.PARAM_IS_BLANK);
     }
     return username;
   }
@@ -49,7 +50,7 @@ public class BaseController {
     Access access = context.getToken().getResourceAccess(clientId);
     if (Objects.isNull(access)) {
       LOGGER.warn("resource_access not found in token");
-      throw new BusinessException("username null or empty");
+      throw new BusinessException("client id is null or empty", ResultCode.PARAM_MISSING_ERROR);
     }
     return access.getRoles();
   }

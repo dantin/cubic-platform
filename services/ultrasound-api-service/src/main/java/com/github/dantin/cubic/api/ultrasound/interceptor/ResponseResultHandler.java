@@ -1,6 +1,5 @@
 package com.github.dantin.cubic.api.ultrasound.interceptor;
 
-import com.github.dantin.cubic.base.exception.BusinessException;
 import com.github.dantin.cubic.protocol.ResponseResult;
 import com.github.dantin.cubic.protocol.RestResult;
 import java.util.Objects;
@@ -46,12 +45,6 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
       ServerHttpRequest request,
       ServerHttpResponse response) {
     LOGGER.info("rewrite response");
-    if (body instanceof BusinessException) {
-      LOGGER.info("process exception");
-      BusinessException exception = (BusinessException) body;
-      // FIXME: get code here
-      return RestResult.failure().build();
-    }
     return RestResult.success(body).build();
   }
 }

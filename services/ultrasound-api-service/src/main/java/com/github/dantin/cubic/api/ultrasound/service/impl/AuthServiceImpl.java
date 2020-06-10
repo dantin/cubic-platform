@@ -1,6 +1,7 @@
 package com.github.dantin.cubic.api.ultrasound.service.impl;
 
 import com.github.dantin.cubic.api.ultrasound.service.AuthService;
+import com.github.dantin.cubic.base.ResultCode;
 import com.github.dantin.cubic.base.exception.BusinessException;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
         restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
     if (!response.getStatusCode().is2xxSuccessful() || Objects.isNull(response.getBody())) {
       LOGGER.warn("oauth failed with status code {}", response.getStatusCode());
-      throw new BusinessException("authentication failed");
+      throw new BusinessException("fail to get token", ResultCode.USER_ACCOUNT_ERROR);
     }
     return response.getBody();
   }
@@ -85,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
         restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
     if (!response.getStatusCode().is2xxSuccessful() || Objects.isNull(response.getBody())) {
       LOGGER.warn("refresh token failed with status code {}", response.getStatusCode());
-      throw new BusinessException("authentication failed");
+      throw new BusinessException("fail to refresh token", ResultCode.USER_REFRESH_TOKEN_ERROR);
     }
     return response.getBody();
   }
@@ -107,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
         restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
     if (!response.getStatusCode().is2xxSuccessful()) {
       LOGGER.warn("logout failed with status code {}", response.getStatusCode());
-      throw new BusinessException("authentication failed");
+      throw new BusinessException("fail to logout", ResultCode.USER_LOGOUT_ERROR);
     }
   }
 

@@ -93,7 +93,7 @@ public class GatewayIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(json.toString())
             .post(url);
-    assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
     logout(token);
   }
@@ -237,7 +237,7 @@ public class GatewayIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(asJsonString(token))
             .post(url);
-    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode());
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
   }
 
   @Test
