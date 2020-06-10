@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument('port', type=int, help='local SRT port')
     parser.add_argument('video_file', type=str, help='local video file path')
 
-    parser.add_argument('--video_path', type=str, default='/home/dantin/Downloads/video', help='local video directory path')
+    parser.add_argument('--video_path', type=str, default='$HOME/Downloads/video', help='local video directory path')
     parser.add_argument('--title', type=str, default='', help='tmux window title')
 
     parser.add_argument('-L', '--level', choices=('debug', 'info', 'warn'), default='info', help='log level: debug, info, warn')
