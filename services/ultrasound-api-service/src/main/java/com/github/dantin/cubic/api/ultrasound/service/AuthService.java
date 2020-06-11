@@ -1,12 +1,12 @@
 package com.github.dantin.cubic.api.ultrasound.service;
 
+import java.util.Map;
+
 public interface AuthService {
 
-  String login(String username, String password);
+  Map<String, Object> login(String username, String password);
 
-  String refreshToken(String refreshToken);
+  Map<String, Object> refreshToken(String refreshToken);
 
   void logout(String accessToken, String refreshToken);
-
-  int getExpires(String jsonString);
 }

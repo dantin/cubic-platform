@@ -1,6 +1,10 @@
 package com.github.dantin.cubic.base.exception;
 
+import com.github.dantin.cubic.base.ResultCode;
+
 public class BusinessException extends RuntimeException {
+
+  private ResultCode code = ResultCode.FAILURE;
 
   /** Default constructor. */
   public BusinessException() {
@@ -14,6 +18,11 @@ public class BusinessException extends RuntimeException {
    */
   public BusinessException(String message) {
     super(message);
+  }
+
+  public BusinessException(String message, ResultCode code) {
+    super(message);
+    this.code = code;
   }
 
   /**
@@ -43,5 +52,9 @@ public class BusinessException extends RuntimeException {
    */
   public BusinessException(Throwable cause) {
     super(cause);
+  }
+
+  public ResultCode getCode() {
+    return code;
   }
 }

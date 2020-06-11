@@ -93,7 +93,7 @@ public class GatewayIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(json.toString())
             .post(url);
-    assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
     logout(token);
   }
@@ -105,12 +105,12 @@ public class GatewayIntegrationTest {
     String url = "/ultrasound/room";
     Response response =
         RestAssured.given()
-            .header("Authorization", bearerHeader(token.getAccessToken()))
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
 
     assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
-    assertThat(response.jsonPath().getMap("$.")).containsKeys("id", "room", "streams");
+    assertThat(response.jsonPath().getMap("data")).containsKeys("id", "room", "streams");
     logout(token);
   }
 
@@ -141,7 +141,7 @@ public class GatewayIntegrationTest {
             .get(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(response.jsonPath().getMap("$."))
+    assertThat(response.jsonPath().getMap("data"))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
 
     // list by page
@@ -154,13 +154,13 @@ public class GatewayIntegrationTest {
             .get(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(response.jsonPath().getMap("$."))
+    assertThat(response.jsonPath().getMap("data"))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
-    assertThat(response.jsonPath().getString("size")).isEqualTo("4");
-    assertThat(response.jsonPath().getString("page")).isEqualTo("1");
-    assertThat(response.jsonPath().getString("pages")).isEqualTo("2");
-    assertThat(response.jsonPath().getString("has_next")).isEqualTo("true");
-    assertThat(response.jsonPath().getString("has_previous")).isEqualTo("false");
+    assertThat(response.jsonPath().getString("data.size")).isEqualTo("4");
+    assertThat(response.jsonPath().getString("data.page")).isEqualTo("1");
+    assertThat(response.jsonPath().getString("data.pages")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("data.has_next")).isEqualTo("true");
+    assertThat(response.jsonPath().getString("data.has_previous")).isEqualTo("false");
 
     response =
         RestAssured.given()
@@ -171,13 +171,13 @@ public class GatewayIntegrationTest {
             .get(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    assertThat(response.jsonPath().getMap("$."))
+    assertThat(response.jsonPath().getMap("data"))
         .containsKeys("pages", "page", "total", "size", "has_previous", "has_next", "routes");
-    assertThat(response.jsonPath().getString("size")).isEqualTo("1");
-    assertThat(response.jsonPath().getString("page")).isEqualTo("2");
-    assertThat(response.jsonPath().getString("pages")).isEqualTo("2");
-    assertThat(response.jsonPath().getString("has_next")).isEqualTo("false");
-    assertThat(response.jsonPath().getString("has_previous")).isEqualTo("true");
+    assertThat(response.jsonPath().getString("data.size")).isEqualTo("1");
+    assertThat(response.jsonPath().getString("data.page")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("data.pages")).isEqualTo("2");
+    assertThat(response.jsonPath().getString("data.has_next")).isEqualTo("false");
+    assertThat(response.jsonPath().getString("data.has_previous")).isEqualTo("true");
     logout(token);
   }
 
@@ -197,9 +197,9 @@ public class GatewayIntegrationTest {
             .post(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    String accessToken = response.jsonPath().getString("access_token");
+    String accessToken = response.jsonPath().getString("data.access_token");
     assertThat(accessToken).isNotEmpty();
-    String refreshToken = response.jsonPath().getString("refresh_token");
+    String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
     Token token = new Token();
@@ -218,9 +218,9 @@ public class GatewayIntegrationTest {
             .post(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
-    String accessToken = response.jsonPath().getString("access_token");
+    String accessToken = response.jsonPath().getString("data.access_token");
     assertThat(accessToken).isNotEmpty();
-    String refreshToken = response.jsonPath().getString("refresh_token");
+    String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
     Token updatedToken = new Token();
@@ -237,7 +237,7 @@ public class GatewayIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(asJsonString(token))
             .post(url);
-    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode());
+    assertEquals(HttpStatus.OK.value(), response.getStatusCode());
   }
 
   @Test
@@ -273,7 +273,7 @@ public class GatewayIntegrationTest {
 
     Token token = login("admin", "password");
     StompHeaders handshakeHeader = new StompHeaders();
-    handshakeHeader.add(HttpHeaders.AUTHORIZATION, "Bearer " + token.getAccessToken());
+    handshakeHeader.add(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()));
     StompSession stompSession =
         stompClient
             .connect(

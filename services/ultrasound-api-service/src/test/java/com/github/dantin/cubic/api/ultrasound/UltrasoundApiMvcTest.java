@@ -1,13 +1,14 @@
 package com.github.dantin.cubic.api.ultrasound;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.protocol.room.Device;
 import com.github.dantin.cubic.protocol.room.Role;
@@ -34,7 +35,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -45,8 +45,6 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class UltrasoundApiMvcTest {
-
-  private final ObjectMapper MAPPER = new ObjectMapper();
 
   @Autowired private WebApplicationContext context;
 
@@ -114,22 +112,23 @@ public class UltrasoundApiMvcTest {
     Route orig = builder.build();
     Mockito.when(roomServiceMock.getRoom(username)).thenReturn(orig);
 
-    MvcResult result =
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.request(HttpMethod.GET, "/room")
-                    .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
-    String jsonString = result.getResponse().getContentAsString();
-    assertNotNull(jsonString);
-
-    Route route = MAPPER.readValue(jsonString, Route.class);
-    assertNotNull(route);
-    assertThat(route.getId(), is(orig.getId()));
-    assertThat(route.getName(), is(orig.getName()));
-    assertEquals(2, route.getStreams().size());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/room")
+                .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(jsonPath("code", is(0)))
+        .andExpect(jsonPath("data.id", is(orig.getId())))
+        .andExpect(jsonPath("data.room", is(orig.getName())))
+        .andExpect(jsonPath("data.streams", hasSize(orig.getStreams().size() / 2)))
+        .andExpect(jsonPath("data.streams[0].role", is(orig.getStreams().get(2).getRole())))
+        .andExpect(jsonPath("data.streams[0].type", is(orig.getStreams().get(2).getType())))
+        .andExpect(jsonPath("data.streams[0].uri", is(orig.getStreams().get(2).getUri())))
+        .andExpect(jsonPath("data.streams[1].role", is(orig.getStreams().get(3).getRole())))
+        .andExpect(jsonPath("data.streams[1].type", is(orig.getStreams().get(3).getType())))
+        .andExpect(jsonPath("data.streams[1].uri", is(orig.getStreams().get(3).getUri())));
 
     logout(token);
   }
@@ -182,26 +181,19 @@ public class UltrasoundApiMvcTest {
     LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("n", String.valueOf(page));
     params.add("s", String.valueOf(size));
-    MvcResult result =
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.request(HttpMethod.GET, "/room/list")
-                    .header(HttpHeaders.AUTHORIZATION, bearerHeader(accessToken))
-                    .accept(MediaType.APPLICATION_JSON)
-                    .params(params))
-            .andExpect(status().isOk())
-            .andReturn();
-    String jsonString = result.getResponse().getContentAsString();
-    assertNotNull(jsonString);
-
-    RoutePage routesByPage = MAPPER.readValue(jsonString, RoutePage.class);
-    assertThat(routesByPage.getPages(), is(pages));
-    assertThat(routesByPage.getPage(), is(page));
-    assertThat(routesByPage.getRoutes().size(), is(size));
-    for (Route route : routesByPage.getRoutes()) {
-      assertNotNull(route);
-      assertEquals(2, route.getStreams().size());
-    }
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/room/list")
+                .header(HttpHeaders.AUTHORIZATION, bearerHeader(accessToken))
+                .accept(MediaType.APPLICATION_JSON)
+                .params(params))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(jsonPath("code", is(0)))
+        .andExpect(jsonPath("data.pages", is(pages)))
+        .andExpect(jsonPath("data.page", is(page)))
+        .andExpect(jsonPath("data.size", is(size)))
+        .andExpect(jsonPath("data.routes[0].streams", hasSize(2)));
   }
 
   @Test
@@ -209,16 +201,15 @@ public class UltrasoundApiMvcTest {
     String username = "room01";
     Token token = login(username);
     String accessToken = bearerHeader(token.getAccessToken());
-    MvcResult result =
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.request(HttpMethod.GET, "/user/profile")
-                    .header(HttpHeaders.AUTHORIZATION, accessToken)
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
-    String resultString = result.getResponse().getContentAsString();
-    assertNotNull(resultString);
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/user/profile")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(jsonPath("code", is(0)))
+        .andExpect(jsonPath("data.username", is(username)));
 
     logout(token);
   }
