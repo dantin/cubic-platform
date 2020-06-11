@@ -105,7 +105,7 @@ public class GatewayIntegrationTest {
     String url = "/ultrasound/room";
     Response response =
         RestAssured.given()
-            .header("Authorization", bearerHeader(token.getAccessToken()))
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .get(url);
 
@@ -273,7 +273,7 @@ public class GatewayIntegrationTest {
 
     Token token = login("admin", "password");
     StompHeaders handshakeHeader = new StompHeaders();
-    handshakeHeader.add(HttpHeaders.AUTHORIZATION, "Bearer " + token.getAccessToken());
+    handshakeHeader.add(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()));
     StompSession stompSession =
         stompClient
             .connect(
