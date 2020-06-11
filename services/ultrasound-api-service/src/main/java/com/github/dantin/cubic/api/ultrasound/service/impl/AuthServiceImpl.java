@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public String login(String username, String password) {
+  public Map<String, Object> login(String username, String password) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -60,8 +61,12 @@ public class AuthServiceImpl implements AuthService {
     HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
     String tokenUrl =
         String.format("%s/realms/%s/protocol/openid-connect/token", authServerUrl, realm);
-    ResponseEntity<String> response =
-        restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
+    ResponseEntity<Map<String, Object>> response =
+        restTemplate.exchange(
+            tokenUrl,
+            HttpMethod.POST,
+            body,
+            new ParameterizedTypeReference<Map<String, Object>>() {});
     if (!response.getStatusCode().is2xxSuccessful() || Objects.isNull(response.getBody())) {
       LOGGER.warn("oauth failed with status code {}", response.getStatusCode());
       throw new BusinessException("fail to get token", ResultCode.USER_ACCOUNT_ERROR);
@@ -70,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public String refreshToken(String refreshToken) {
+  public Map<String, Object> refreshToken(String refreshToken) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -82,8 +87,12 @@ public class AuthServiceImpl implements AuthService {
     HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
     String tokenUrl =
         String.format("%s/realms/%s/protocol/openid-connect/token", authServerUrl, realm);
-    ResponseEntity<String> response =
-        restTemplate.exchange(tokenUrl, HttpMethod.POST, body, String.class);
+    ResponseEntity<Map<String, Object>> response =
+        restTemplate.exchange(
+            tokenUrl,
+            HttpMethod.POST,
+            body,
+            new ParameterizedTypeReference<Map<String, Object>>() {});
     if (!response.getStatusCode().is2xxSuccessful() || Objects.isNull(response.getBody())) {
       LOGGER.warn("refresh token failed with status code {}", response.getStatusCode());
       throw new BusinessException("fail to refresh token", ResultCode.USER_REFRESH_TOKEN_ERROR);
@@ -110,11 +119,5 @@ public class AuthServiceImpl implements AuthService {
       LOGGER.warn("logout failed with status code {}", response.getStatusCode());
       throw new BusinessException("fail to logout", ResultCode.USER_LOGOUT_ERROR);
     }
-  }
-
-  @Override
-  public int getExpires(String jsonString) {
-    Map<String, Object> body = jsonParser.parseMap(jsonString);
-    return (Integer) body.get("expires_in");
   }
 }

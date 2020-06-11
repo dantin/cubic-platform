@@ -1,6 +1,7 @@
 package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.base.CollectionsHelper;
+import com.github.dantin.cubic.protocol.ResponseResult;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.security.RolesAllowed;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
+@ResponseResult
 public class UserController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);

@@ -3,8 +3,10 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 import com.github.dantin.cubic.api.ultrasound.service.AuthService;
 import com.github.dantin.cubic.base.ResultCode;
 import com.github.dantin.cubic.base.exception.BusinessException;
+import com.github.dantin.cubic.protocol.ResponseResult;
 import com.github.dantin.cubic.protocol.ultrasound.LoginRequest;
 import com.github.dantin.cubic.protocol.ultrasound.Token;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@ResponseResult
 public class AuthController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
@@ -36,7 +39,7 @@ public class AuthController extends BaseController {
   }
 
   @PostMapping("/login")
-  public String login(@RequestBody LoginRequest request) {
+  public Map<String, Object> login(@RequestBody LoginRequest request) {
     String username = request.getUsername();
     LOGGER.info("user '{}' login", username);
 
@@ -44,8 +47,8 @@ public class AuthController extends BaseController {
       throw new BusinessException("user already login", ResultCode.USER_IN_USE);
     }
 
-    String body = authService.login(username, request.getPassword());
-    int expire = authService.getExpires(body);
+    Map<String, Object> body = authService.login(username, request.getPassword());
+    int expire = (Integer) body.get("expires_in");
     redisTemplate.opsForValue().set(username, username);
     redisTemplate.expire(username, expire, TimeUnit.SECONDS);
     return body;
@@ -53,25 +56,24 @@ public class AuthController extends BaseController {
 
   @PostMapping("/refresh")
   @RolesAllowed({"ultrasound-user", "ultrasound-admin", "ultrasound-root"})
-  public String refreshToken(@RequestBody Token request) {
+  public Map<String, Object> refreshToken(@RequestBody Token request) {
     String username = super.getUsername();
     KeycloakSecurityContext context = getKeycloakSecurityContext();
     LOGGER.info("refresh token triggered by '{}'", username);
-    String body = authService.refreshToken(request.getRefreshToken());
-    int expire = authService.getExpires(body);
+    Map<String, Object> body = authService.refreshToken(request.getRefreshToken());
+    int expire = (Integer) body.get("expires_in");
     redisTemplate.expire(username, expire, TimeUnit.SECONDS);
     return body;
   }
 
   @PostMapping("/logout")
   @RolesAllowed({"ultrasound-user", "ultrasound-admin", "ultrasound-root"})
-  public String logout(@RequestBody Token request) {
+  public void logout(@RequestBody Token request) {
     String username = super.getUsername();
     LOGGER.info("logout triggered by '{}'", username);
     KeycloakSecurityContext context = getKeycloakSecurityContext();
 
     authService.logout(context.getTokenString(), request.getRefreshToken());
     redisTemplate.delete(username);
-    return "bye";
   }
 }

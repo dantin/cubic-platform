@@ -13,8 +13,8 @@ package com.github.dantin.cubic.base;
  * </pre>
  */
 public enum ResultCode {
-  SUCCESS(1, "success"),
-  FAILURE(2, "failure"),
+  SUCCESS(0, "success"),
+  FAILURE(1, "failure"),
   PARAM_IS_INVALID(1001, "parameter is invalid"),
   PARAM_IS_BLANK(1002, "parameter is blank"),
   PARAM_TYPE_ERROR(1003, "parameter type error"),
