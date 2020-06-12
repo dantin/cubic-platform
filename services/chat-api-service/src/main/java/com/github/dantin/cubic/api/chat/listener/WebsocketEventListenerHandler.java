@@ -57,13 +57,11 @@ public class WebsocketEventListenerHandler {
       String username = (String) value;
       LOGGER.info("user {} disconnected", username);
 
-      ChatMessage message = new ChatMessage();
-      message.setType(MessageType.LEAVE);
-      message.setSender(username);
-
       try {
         redisTemplate.opsForSet().remove(customizedKeyProperties.getOnlineUser(), username);
-        String json = objectMapper.writeValueAsString(message);
+        String json =
+            objectMapper.writeValueAsString(
+                ChatMessage.builder().type(MessageType.LEAVE).sender(username).build());
         messageService.updateStatus(json);
       } catch (JsonProcessingException e) {
         LOGGER.warn("fail to serialize message to json on user {} disconnecting", username, e);
