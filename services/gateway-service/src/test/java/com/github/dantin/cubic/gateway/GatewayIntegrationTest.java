@@ -290,7 +290,8 @@ public class GatewayIntegrationTest {
         ChatMessage.builder()
             .type(MessageType.JOIN)
             .sender("test-user")
-            .content("{\"content\": \"json content\"}"));
+            .content("{\"content\": \"json content\"}")
+            .build());
 
     ChatMessage chatMessage = completableFuture.get(10, TimeUnit.SECONDS);
     assertNotNull(chatMessage);

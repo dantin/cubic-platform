@@ -86,7 +86,7 @@ public class ChatMessage {
 
     @JsonSetter(SENDER_FIELD)
     public Builder sender(String sender) {
-      if ((Objects.nonNull(content))) {
+      if ((Objects.nonNull(sender))) {
         this.sender = sender;
       }
       return this;
