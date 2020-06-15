@@ -9,6 +9,10 @@ import com.google.common.base.Objects;
 
 @JsonDeserialize(builder = Stream.Builder.class)
 public class Stream {
+  private static final String TYPE_FIELD = "type";
+  private static final String URI_FIELD = "uri";
+  private static final String ROLE_FIELD = "role";
+
   private final String type;
   private final String uri;
   private final String role;
@@ -23,17 +27,17 @@ public class Stream {
     return new Builder();
   }
 
-  @JsonGetter("type")
+  @JsonGetter(TYPE_FIELD)
   public String getType() {
     return type;
   }
 
-  @JsonGetter("uri")
+  @JsonGetter(URI_FIELD)
   public String getUri() {
     return uri;
   }
 
-  @JsonGetter("role")
+  @JsonGetter(ROLE_FIELD)
   public String getRole() {
     return role;
   }
@@ -46,19 +50,19 @@ public class Stream {
 
     Builder() {}
 
-    @JsonSetter("type")
+    @JsonSetter(TYPE_FIELD)
     public Builder type(String type) {
       this.type = type;
       return this;
     }
 
-    @JsonSetter("uri")
+    @JsonSetter(URI_FIELD)
     public Builder uri(String uri) {
       this.uri = uri;
       return this;
     }
 
-    @JsonSetter("role")
+    @JsonSetter(ROLE_FIELD)
     public Builder role(String role) {
       this.role = role;
       return this;

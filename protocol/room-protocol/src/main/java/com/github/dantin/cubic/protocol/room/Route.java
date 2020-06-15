@@ -12,6 +12,10 @@ import java.util.List;
 @JsonDeserialize(builder = Route.Builder.class)
 public class Route {
 
+  private static final String ID_FIELD = "id";
+  private static final String ROOM_FIELD = "room";
+  private static final String STREAMS_FIELD = "streams";
+
   private final String id;
   private final String name;
   private final List<Stream> streams;
@@ -26,17 +30,17 @@ public class Route {
     return new Builder();
   }
 
-  @JsonGetter("id")
+  @JsonGetter(ID_FIELD)
   public String getId() {
     return id;
   }
 
-  @JsonGetter("room")
+  @JsonGetter(ROOM_FIELD)
   public String getName() {
     return name;
   }
 
-  @JsonGetter("streams")
+  @JsonGetter(STREAMS_FIELD)
   public List<Stream> getStreams() {
     return streams;
   }
@@ -51,19 +55,19 @@ public class Route {
       this.streams = new ArrayList<>();
     }
 
-    @JsonSetter("id")
+    @JsonSetter(ID_FIELD)
     public Builder id(String id) {
       this.id = id;
       return this;
     }
 
-    @JsonSetter("room")
+    @JsonSetter(ROOM_FIELD)
     public Builder name(String name) {
       this.name = name;
       return this;
     }
 
-    @JsonSetter("streams")
+    @JsonSetter(STREAMS_FIELD)
     public Builder streams(List<Stream> streams) {
       this.streams = streams;
       return this;
