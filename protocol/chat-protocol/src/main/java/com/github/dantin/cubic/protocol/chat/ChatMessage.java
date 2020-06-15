@@ -10,6 +10,10 @@ import java.util.Objects;
 @JsonDeserialize(builder = ChatMessage.Builder.class)
 public class ChatMessage {
 
+  private static final String TYPE_FIELD = "type";
+  private static final String CONTENT_FIELD = "content";
+  private static final String SENDER_FIELD = "sender";
+
   private final MessageType type;
   private final String content;
   private final String sender;
@@ -30,17 +34,17 @@ public class ChatMessage {
     return new Builder();
   }
 
-  @JsonGetter("type")
+  @JsonGetter(TYPE_FIELD)
   public MessageType getType() {
     return type;
   }
 
-  @JsonGetter("content")
+  @JsonGetter(CONTENT_FIELD)
   public String getContent() {
     return content;
   }
 
-  @JsonGetter("sender")
+  @JsonGetter(SENDER_FIELD)
   public String getSender() {
     return sender;
   }
@@ -64,7 +68,7 @@ public class ChatMessage {
 
     Builder() {}
 
-    @JsonSetter("type")
+    @JsonSetter(TYPE_FIELD)
     public Builder type(MessageType type) {
       if (Objects.nonNull(type)) {
         this.type = type;
@@ -72,7 +76,7 @@ public class ChatMessage {
       return this;
     }
 
-    @JsonSetter("content")
+    @JsonSetter(CONTENT_FIELD)
     public Builder content(String content) {
       if ((Objects.nonNull(content))) {
         this.content = content;
@@ -80,7 +84,7 @@ public class ChatMessage {
       return this;
     }
 
-    @JsonSetter("sender")
+    @JsonSetter(SENDER_FIELD)
     public Builder sender(String sender) {
       if ((Objects.nonNull(content))) {
         this.sender = sender;
