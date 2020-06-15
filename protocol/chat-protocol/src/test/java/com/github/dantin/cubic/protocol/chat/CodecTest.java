@@ -13,7 +13,7 @@ import org.junit.Test;
 public class CodecTest {
 
   @Test
-  public void marshalStream_thenSuccess() {
+  public void marshalMessage_thenSuccess() {
     final String content = "content";
     final String sender = "sender";
     final MessageType type = MessageType.JOIN;

@@ -231,11 +231,7 @@ public class UltrasoundApiMvcTest {
     String refreshToken = response.jsonPath().getString("refresh_token");
     assertNotNull(refreshToken);
 
-    Token token = new Token();
-    token.setAccessToken(accessToken);
-    token.setRefreshToken(refreshToken);
-
-    return token;
+    return Token.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
 
   private void logout(Token token) {

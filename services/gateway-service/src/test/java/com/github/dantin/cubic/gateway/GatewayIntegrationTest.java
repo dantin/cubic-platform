@@ -202,10 +202,7 @@ public class GatewayIntegrationTest {
     String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
-    Token token = new Token();
-    token.setAccessToken(accessToken);
-    token.setRefreshToken(refreshToken);
-    return token;
+    return Token.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
 
   private Token refreshToken(Token token) {
@@ -223,10 +220,7 @@ public class GatewayIntegrationTest {
     String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
-    Token updatedToken = new Token();
-    updatedToken.setAccessToken(accessToken);
-    updatedToken.setRefreshToken(refreshToken);
-    return updatedToken;
+    return Token.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
 
   private void logout(Token token) {
