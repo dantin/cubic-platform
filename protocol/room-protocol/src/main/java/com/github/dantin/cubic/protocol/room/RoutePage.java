@@ -10,6 +10,9 @@ import java.util.Objects;
 
 @JsonDeserialize(builder = RoutePage.Builder.class)
 public class RoutePage extends Pagination {
+
+  private static final String ROUTES_FIELD = "routes";
+
   private final List<Route> routes;
 
   private RoutePage(Builder builder) {
@@ -21,7 +24,7 @@ public class RoutePage extends Pagination {
     return new Builder();
   }
 
-  @JsonGetter("routes")
+  @JsonGetter(ROUTES_FIELD)
   public List<Route> getRoutes() {
     return routes;
   }
@@ -33,7 +36,7 @@ public class RoutePage extends Pagination {
       this.routes = new ArrayList<>();
     }
 
-    @JsonSetter("routes")
+    @JsonSetter(ROUTES_FIELD)
     public Builder routes(List<Route> routes) {
       this.routes = routes;
       return this;

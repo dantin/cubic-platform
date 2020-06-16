@@ -6,6 +6,13 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 /** Pagination information. */
 public abstract class Pagination {
 
+  private static final String PAGES_FIELD = "pages";
+  private static final String PAGE_FIELD = "page";
+  private static final String TOTAL_FIELD = "total";
+  private static final String SIZE_FIELD = "size";
+  private static final String HAS_PREVIOUS_FIELD = "has_previous";
+  private static final String HAS_NEXT_FIELD = "has_next";
+
   private final int pages;
   private final int page;
   private final long total;
@@ -22,32 +29,32 @@ public abstract class Pagination {
     this.hasNext = builder.hasNext;
   }
 
-  @JsonGetter("pages")
+  @JsonGetter(PAGES_FIELD)
   public int getPages() {
     return pages;
   }
 
-  @JsonGetter("page")
+  @JsonGetter(PAGE_FIELD)
   public int getPage() {
     return page;
   }
 
-  @JsonGetter("total")
+  @JsonGetter(TOTAL_FIELD)
   public long getTotal() {
     return total;
   }
 
-  @JsonGetter("size")
+  @JsonGetter(SIZE_FIELD)
   public int getSize() {
     return size;
   }
 
-  @JsonGetter("has_previous")
+  @JsonGetter(HAS_PREVIOUS_FIELD)
   public boolean isHasPrevious() {
     return hasPrevious;
   }
 
-  @JsonGetter("has_next")
+  @JsonGetter(HAS_NEXT_FIELD)
   public boolean isHasNext() {
     return hasNext;
   }
@@ -80,37 +87,37 @@ public abstract class Pagination {
       return mInstance;
     }
 
-    @JsonSetter("pages")
+    @JsonSetter(PAGES_FIELD)
     public T pages(int pages) {
       this.pages = pages;
       return mInstance;
     }
 
-    @JsonSetter("page")
+    @JsonSetter(PAGE_FIELD)
     public T page(int page) {
       this.page = page;
       return mInstance;
     }
 
-    @JsonSetter("size")
+    @JsonSetter(SIZE_FIELD)
     public T size(int size) {
       this.size = size;
       return mInstance;
     }
 
-    @JsonSetter("total")
+    @JsonSetter(TOTAL_FIELD)
     public T total(long total) {
       this.total = total;
       return mInstance;
     }
 
-    @JsonSetter("has_previous")
+    @JsonSetter(HAS_PREVIOUS_FIELD)
     public T hasPrevious(boolean hasPrevious) {
       this.hasPrevious = hasPrevious;
       return mInstance;
     }
 
-    @JsonSetter("has_next")
+    @JsonSetter(HAS_NEXT_FIELD)
     public T hasNext(boolean hasNext) {
       this.hasNext = hasNext;
       return mInstance;

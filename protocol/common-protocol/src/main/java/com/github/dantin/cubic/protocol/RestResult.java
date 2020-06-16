@@ -6,6 +6,10 @@ import com.github.dantin.cubic.base.ResultCode;
 /** RestResult is the RESTFUL response body entity. */
 public class RestResult {
 
+  private static final String CODE_FIELD = "code";
+  private static final String MESSAGE_FIELD = "message";
+  private static final String DATA_FIELD = "data";
+
   private final Integer code;
   private final String message;
   private final Object data;
@@ -32,17 +36,17 @@ public class RestResult {
     return new Builder().resultCode(resultCode);
   }
 
-  @JsonGetter("code")
+  @JsonGetter(CODE_FIELD)
   public Integer getCode() {
     return code;
   }
 
-  @JsonGetter("message")
+  @JsonGetter(MESSAGE_FIELD)
   public String getMessage() {
     return message;
   }
 
-  @JsonGetter("data")
+  @JsonGetter(DATA_FIELD)
   public Object getData() {
     return data;
   }

@@ -202,10 +202,7 @@ public class GatewayIntegrationTest {
     String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
-    Token token = new Token();
-    token.setAccessToken(accessToken);
-    token.setRefreshToken(refreshToken);
-    return token;
+    return Token.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
 
   private Token refreshToken(Token token) {
@@ -223,10 +220,7 @@ public class GatewayIntegrationTest {
     String refreshToken = response.jsonPath().getString("data.refresh_token");
     assertThat(refreshToken).isNotEmpty();
 
-    Token updatedToken = new Token();
-    updatedToken.setAccessToken(accessToken);
-    updatedToken.setRefreshToken(refreshToken);
-    return updatedToken;
+    return Token.builder().accessToken(accessToken).refreshToken(refreshToken).build();
   }
 
   private void logout(Token token) {
@@ -250,15 +244,16 @@ public class GatewayIntegrationTest {
     StompSession stompSession =
         stompClient.connect(endpoint, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
 
-    ChatMessage body = new ChatMessage();
-    body.setType(MessageType.JOIN);
-    body.setSender("test-user");
-    body.setContent("{\"content\": \"json content\"}");
-
     stompSession.subscribe(SUBSCRIBE_STATUS_ENDPOINT, new ChatMessageStompFrameHandler());
 
     try {
-      stompSession.send(SEND_STATUS_ENDPOINT, body);
+      stompSession.send(
+          SEND_STATUS_ENDPOINT,
+          ChatMessage.builder()
+              .type(MessageType.JOIN)
+              .sender("test-user")
+              .content("{\"content\": \"json content\"}")
+              .build());
     } catch (IllegalStateException e) {
       assertNotNull(e);
     }
@@ -283,13 +278,14 @@ public class GatewayIntegrationTest {
                 new StompSessionHandlerAdapter() {})
             .get(3, TimeUnit.SECONDS);
 
-    ChatMessage body = new ChatMessage();
-    body.setType(MessageType.JOIN);
-    body.setSender("test-user");
-    body.setContent("{\"content\": \"json content\"}");
-
     stompSession.subscribe(SUBSCRIBE_STATUS_ENDPOINT, new ChatMessageStompFrameHandler());
-    stompSession.send(SEND_STATUS_ENDPOINT, body);
+    stompSession.send(
+        SEND_STATUS_ENDPOINT,
+        ChatMessage.builder()
+            .type(MessageType.JOIN)
+            .sender("test-user")
+            .content("{\"content\": \"json content\"}")
+            .build());
 
     ChatMessage chatMessage = completableFuture.get(10, TimeUnit.SECONDS);
     assertNotNull(chatMessage);
