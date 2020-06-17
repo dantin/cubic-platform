@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dantin.cubic.base.CollectionsHelper;
+import com.github.dantin.cubic.base.ResultCode;
 import com.github.dantin.cubic.protocol.chat.ChatMessage;
 import com.github.dantin.cubic.protocol.chat.ChatMessage.MessageType;
 import com.github.dantin.cubic.protocol.ultrasound.Token;
@@ -94,6 +95,7 @@ public class GatewayIntegrationTest {
             .body(json.toString())
             .post(url);
     assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+    assertThat(response.jsonPath().getInt("code")).isEqualTo(ResultCode.USER_IN_USE.getCode());
 
     logout(token);
   }
@@ -119,12 +121,15 @@ public class GatewayIntegrationTest {
     Token token = login("room01", "password");
 
     String url = "/ultrasound/room/list";
-    RestAssured.given()
-        .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .get(url)
-        .then()
-        .statusCode(HttpStatus.FORBIDDEN.value());
+    Response response =
+        RestAssured.given()
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .get(url);
+
+    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
+    assertThat(response.jsonPath().getInt("code")).isNotEqualTo(ResultCode.SUCCESS.getCode());
+
     logout(token);
   }
 
