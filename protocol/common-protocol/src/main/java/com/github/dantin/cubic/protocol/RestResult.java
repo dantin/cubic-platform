@@ -1,9 +1,12 @@
 package com.github.dantin.cubic.protocol;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.dantin.cubic.base.ResultCode;
 
 /** RestResult is the RESTFUL response body entity. */
+@JsonInclude(Include.NON_NULL)
 public class RestResult {
 
   private static final String CODE_FIELD = "code";
