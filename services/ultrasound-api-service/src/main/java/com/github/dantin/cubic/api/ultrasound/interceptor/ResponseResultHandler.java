@@ -44,7 +44,9 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
       Class<? extends HttpMessageConverter<?>> selectedConverterType,
       ServerHttpRequest request,
       ServerHttpResponse response) {
-    LOGGER.info("rewrite response");
+    if (body instanceof RestResult) {
+      return body;
+    }
     return RestResult.success(body).build();
   }
 }
