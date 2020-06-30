@@ -11,9 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.protocol.room.Device;
-import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
+import com.github.dantin.cubic.protocol.room.Scope;
 import com.github.dantin.cubic.protocol.room.Stream;
 import com.github.dantin.cubic.protocol.ultrasound.Token;
 import io.restassured.RestAssured;
@@ -86,25 +86,25 @@ public class UltrasoundApiMvcTest {
     Route.Builder builder = Route.builder().id("1").name("route 1");
     builder.addStream(
         Stream.builder()
-            .role(Role.ADMIN.getAlias())
+            .scope(Scope.ADMIN.getAlias())
             .type(Device.CAMERA.getAlias())
             .uri("srt::" + UUID.randomUUID().toString())
             .build());
     builder.addStream(
         Stream.builder()
-            .role(Role.ADMIN.getAlias())
+            .scope(Scope.ADMIN.getAlias())
             .type(Device.DEVICE.getAlias())
             .uri("srt::" + UUID.randomUUID().toString())
             .build());
     builder.addStream(
         Stream.builder()
-            .role(Role.USER.getAlias())
+            .scope(Scope.USER.getAlias())
             .type(Device.CAMERA.getAlias())
             .uri("srt::" + UUID.randomUUID().toString())
             .build());
     builder.addStream(
         Stream.builder()
-            .role(Role.USER.getAlias())
+            .scope(Scope.USER.getAlias())
             .type(Device.DEVICE.getAlias())
             .uri("srt::" + UUID.randomUUID().toString())
             .build());
@@ -123,10 +123,10 @@ public class UltrasoundApiMvcTest {
         .andExpect(jsonPath("data.id", is(orig.getId())))
         .andExpect(jsonPath("data.room", is(orig.getName())))
         .andExpect(jsonPath("data.streams", hasSize(orig.getStreams().size() / 2)))
-        .andExpect(jsonPath("data.streams[0].role", is(orig.getStreams().get(2).getRole())))
+        .andExpect(jsonPath("data.streams[0].scope", is(orig.getStreams().get(2).getScope())))
         .andExpect(jsonPath("data.streams[0].type", is(orig.getStreams().get(2).getType())))
         .andExpect(jsonPath("data.streams[0].uri", is(orig.getStreams().get(2).getUri())))
-        .andExpect(jsonPath("data.streams[1].role", is(orig.getStreams().get(3).getRole())))
+        .andExpect(jsonPath("data.streams[1].scope", is(orig.getStreams().get(3).getScope())))
         .andExpect(jsonPath("data.streams[1].type", is(orig.getStreams().get(3).getType())))
         .andExpect(jsonPath("data.streams[1].uri", is(orig.getStreams().get(3).getUri())));
 
@@ -151,25 +151,25 @@ public class UltrasoundApiMvcTest {
       Route.Builder route = Route.builder().id(String.valueOf(id)).name("route " + id);
       route.addStream(
           Stream.builder()
-              .role(Role.ADMIN.getAlias())
+              .scope(Scope.ADMIN.getAlias())
               .type(Device.CAMERA.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.ADMIN.getAlias())
+              .scope(Scope.ADMIN.getAlias())
               .type(Device.DEVICE.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.USER.getAlias())
+              .scope(Scope.USER.getAlias())
               .type(Device.CAMERA.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.USER.getAlias())
+              .scope(Scope.USER.getAlias())
               .type(Device.DEVICE.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());

@@ -12,7 +12,7 @@ public class Stream {
 
   private String type;
 
-  private String role;
+  private String scope;
 
   private String protocol;
 
@@ -47,12 +47,12 @@ public class Stream {
     this.type = type;
   }
 
-  public String getRole() {
-    return role;
+  public String getScope() {
+    return scope;
   }
 
-  public void setRole(String role) {
-    this.role = role;
+  public void setScope(String scope) {
+    this.scope = scope;
   }
 
   public String getProtocol() {
@@ -106,7 +106,7 @@ public class Stream {
     Stream stream = (Stream) o;
     return Objects.equal(id, stream.id)
         && Objects.equal(type, stream.type)
-        && Objects.equal(role, stream.role)
+        && Objects.equal(scope, stream.scope)
         && Objects.equal(protocol, stream.protocol)
         && Objects.equal(host, stream.host)
         && Objects.equal(port, stream.port)
@@ -116,7 +116,7 @@ public class Stream {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id, type, role, protocol, host, port, createAt, roomId);
+    return Objects.hashCode(id, type, scope, protocol, host, port, createAt, roomId);
   }
 
   @Override
@@ -125,7 +125,7 @@ public class Stream {
         .omitNullValues()
         .add("id", id)
         .add("type", type)
-        .add("role", role)
+        .add("scope", scope)
         .add("protocol", protocol)
         .add("host", host)
         .add("port", port)

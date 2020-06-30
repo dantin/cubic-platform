@@ -16,7 +16,7 @@ INSERT INTO t_room_allocation(username, room_id) VALUES
 ('room05', '5');
 
 truncate table t_stream;
-INSERT INTO t_stream(id, type, role, protocol, host, port, create_at, room_id) VALUES
+INSERT INTO t_stream(id, type, scope, protocol, host, port, create_at, room_id) VALUES
 ('1',  'DEVICE', 'ADMIN', 'srt', '113.31.109.140', 23012, '2019-12-23 15:03:31.024', '1'),
 ('2',  'CAMERA', 'ADMIN', 'srt', '106.75.216.96',  65102, '2019-12-23 15:03:31.024', '1'),
 ('3',  'DEVICE', 'USER',  'srt', '113.31.109.140', 23012, '2019-12-23 15:03:31.024', '1'),
