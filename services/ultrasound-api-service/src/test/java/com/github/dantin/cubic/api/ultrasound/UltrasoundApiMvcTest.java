@@ -134,6 +134,65 @@ public class UltrasoundApiMvcTest {
   }
 
   @Test
+  public void getQcStream_thenSuccess() throws Exception {
+    final String username = "room01";
+    Token token = login(username);
+
+    // mock data
+    Route.Builder builder = Route.builder().id("1").name("route 1");
+    builder.addStream(
+        Stream.builder()
+            .scope(Scope.ADMIN.getAlias())
+            .type(Device.CAMERA.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .scope(Scope.ADMIN.getAlias())
+            .type(Device.DEVICE.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .scope(Scope.USER.getAlias())
+            .type(Device.CAMERA.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .scope(Scope.USER.getAlias())
+            .type(Device.DEVICE.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+    builder.addStream(
+        Stream.builder()
+            .scope(Scope.QC.getAlias())
+            .type(Device.CAMERA.getAlias())
+            .uri("srt::" + UUID.randomUUID().toString())
+            .build());
+
+    Route orig = builder.build();
+    Mockito.when(roomServiceMock.getRoom(username)).thenReturn(orig);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.request(HttpMethod.GET, "/room/qc")
+                .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(jsonPath("code", is(0)))
+        .andExpect(jsonPath("data.id", is(orig.getId())))
+        .andExpect(jsonPath("data.room", is(orig.getName())))
+        .andExpect(jsonPath("data.streams", hasSize(1)))
+        .andExpect(jsonPath("data.streams[0].scope", is(orig.getStreams().get(4).getScope())))
+        .andExpect(jsonPath("data.streams[0].type", is(orig.getStreams().get(4).getType())))
+        .andExpect(jsonPath("data.streams[0].uri", is(orig.getStreams().get(4).getUri())));
+
+    logout(token);
+  }
+
+  @Test
   public void listRoomByPage_thenSuccess() throws Exception {
     String username = "admin";
     Token token = login(username);

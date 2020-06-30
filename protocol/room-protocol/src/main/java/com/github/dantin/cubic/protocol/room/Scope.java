@@ -6,7 +6,7 @@ public enum Scope {
   ROOT(1, "ROOT"),
   ADMIN(2, "ADMIN"),
   USER(3, "USER"),
-  TEMP(4, "TEMP");
+  QC(4, "QC");
 
   private final int code;
   private final String alias;

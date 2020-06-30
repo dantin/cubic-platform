@@ -79,4 +79,25 @@ public class RoomController extends BaseController {
                     .collect(Collectors.toList()));
     return builder.build();
   }
+
+  @GetMapping("/qc")
+  @RolesAllowed({"ultrasound-user", "ultrasound-root"})
+  public Route getQcStream() {
+    LOGGER.info("load room QC stream");
+
+    String username = super.getUsername();
+    LOGGER.info("load room QC stream triggered by '{}'", username);
+
+    Route orig = roomService.getRoom(username);
+    Route.Builder builder =
+        Route.builder()
+            .id(orig.getId())
+            .name(orig.getName())
+            .streams(
+                orig.getStreams()
+                    .stream()
+                    .filter(s -> Scope.from(s.getScope()) == Scope.QC)
+                    .collect(Collectors.toList()));
+    return builder.build();
+  }
 }

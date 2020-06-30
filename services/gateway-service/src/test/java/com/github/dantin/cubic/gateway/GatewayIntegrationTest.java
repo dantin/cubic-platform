@@ -117,6 +117,23 @@ public class GatewayIntegrationTest {
   }
 
   @Test
+  public void userRetrieveRoomQc_thenSuccess() {
+    Token token = login("room01", "password");
+
+    String url = "/ultrasound/room/qc";
+    Response response =
+        RestAssured.given()
+            .header(HttpHeaders.AUTHORIZATION, bearerHeader(token.getAccessToken()))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .get(url);
+
+    assertThat(HttpStatus.OK.value()).isEqualTo(response.getStatusCode());
+    assertThat(response.jsonPath().getMap("data")).containsKeys("id", "room", "streams");
+    assertThat(response.jsonPath().getList("data.streams")).hasSize(1);
+    logout(token);
+  }
+
+  @Test
   public void userListRoom_thenFail() {
     Token token = login("room01", "password");
 
