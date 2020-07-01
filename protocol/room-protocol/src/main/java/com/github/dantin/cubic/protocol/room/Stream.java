@@ -11,16 +11,16 @@ import com.google.common.base.Objects;
 public class Stream {
   private static final String TYPE_FIELD = "type";
   private static final String URI_FIELD = "uri";
-  private static final String ROLE_FIELD = "role";
+  private static final String SCOPE_FIELD = "scope";
 
   private final String type;
   private final String uri;
-  private final String role;
+  private final String scope;
 
   private Stream(Builder builder) {
     this.type = builder.type;
     this.uri = builder.uri;
-    this.role = builder.role;
+    this.scope = builder.scope;
   }
 
   public static Builder builder() {
@@ -37,16 +37,16 @@ public class Stream {
     return uri;
   }
 
-  @JsonGetter(ROLE_FIELD)
-  public String getRole() {
-    return role;
+  @JsonGetter(SCOPE_FIELD)
+  public String getScope() {
+    return scope;
   }
 
   @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
   public static final class Builder implements com.github.dantin.cubic.base.Builder<Stream> {
     private String type;
     private String uri;
-    private String role;
+    private String scope;
 
     Builder() {}
 
@@ -62,9 +62,9 @@ public class Stream {
       return this;
     }
 
-    @JsonSetter(ROLE_FIELD)
-    public Builder role(String role) {
-      this.role = role;
+    @JsonSetter(SCOPE_FIELD)
+    public Builder scope(String scope) {
+      this.scope = scope;
       return this;
     }
 
@@ -76,7 +76,7 @@ public class Stream {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(type, uri, role);
+    return Objects.hashCode(type, uri, scope);
   }
 
   @Override
@@ -88,16 +88,18 @@ public class Stream {
       return false;
     }
     Stream o = (Stream) obj;
-    return Objects.equal(type, o.type) && Objects.equal(uri, o.uri) && Objects.equal(role, o.role);
+    return Objects.equal(type, o.type)
+        && Objects.equal(uri, o.uri)
+        && Objects.equal(scope, o.scope);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .omitNullValues()
-        .add("type", type)
-        .add("uri", uri)
-        .add("role", role)
+        .add(TYPE_FIELD, type)
+        .add(URI_FIELD, uri)
+        .add(SCOPE_FIELD, scope)
         .toString();
   }
 }

@@ -2,9 +2,9 @@ package com.github.dantin.cubic.api.ultrasound.controller;
 
 import com.github.dantin.cubic.api.ultrasound.service.RoomService;
 import com.github.dantin.cubic.protocol.ResponseResult;
-import com.github.dantin.cubic.protocol.room.Role;
 import com.github.dantin.cubic.protocol.room.Route;
 import com.github.dantin.cubic.protocol.room.RoutePage;
+import com.github.dantin.cubic.protocol.room.Scope;
 import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +52,7 @@ public class RoomController extends BaseController {
                           route
                               .getStreams()
                               .stream()
-                              .filter(s -> Role.from(s.getRole()) == Role.ADMIN)
+                              .filter(s -> Scope.from(s.getScope()) == Scope.ADMIN)
                               .collect(Collectors.toList()))
                       .build());
             });
@@ -75,7 +75,28 @@ public class RoomController extends BaseController {
             .streams(
                 orig.getStreams()
                     .stream()
-                    .filter(s -> Role.from(s.getRole()) == Role.USER)
+                    .filter(s -> Scope.from(s.getScope()) == Scope.USER)
+                    .collect(Collectors.toList()));
+    return builder.build();
+  }
+
+  @GetMapping("/qc")
+  @RolesAllowed({"ultrasound-user", "ultrasound-root"})
+  public Route getQcStream() {
+    LOGGER.info("load room QC stream");
+
+    String username = super.getUsername();
+    LOGGER.info("load room QC stream triggered by '{}'", username);
+
+    Route orig = roomService.getRoom(username);
+    Route.Builder builder =
+        Route.builder()
+            .id(orig.getId())
+            .name(orig.getName())
+            .streams(
+                orig.getStreams()
+                    .stream()
+                    .filter(s -> Scope.from(s.getScope()) == Scope.QC)
                     .collect(Collectors.toList()));
     return builder.build();
   }

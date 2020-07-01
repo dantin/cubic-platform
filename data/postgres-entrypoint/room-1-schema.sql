@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS t_room_allocation (
 CREATE TABLE IF NOT EXISTS t_stream (
     id VARCHAR(32) NOT NULL,
     type VARCHAR(32) NOT NULL,
-    role VARCHAR(32) NOT NULL,
+    scope VARCHAR(32) NOT NULL,
     protocol VARCHAR(16) NOT NULL,
     host VARCHAR(255) NOT NULL,
     port INTEGER NOT NULL,

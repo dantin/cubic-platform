@@ -17,14 +17,14 @@ public class CodecTest {
   @Test
   public void marshalStream_thenSuccess() {
     final String uri = "srt://xxx.xx.xx.x";
-    final String role = Role.ADMIN.getAlias();
+    final String scope = Scope.ADMIN.getAlias();
     final String type = Device.CAMERA.getAlias();
 
-    Stream stream = Stream.builder().role(role).type(type).uri(uri).build();
+    Stream stream = Stream.builder().scope(scope).type(type).uri(uri).build();
     Stream actual = Utility.marshal(stream, Stream.class);
 
     assertNotNull(actual);
-    assertThat(actual.getRole(), is(role));
+    assertThat(actual.getScope(), is(scope));
     assertThat(actual.getType(), is(type));
     assertThat(actual.getUri(), is(uri));
   }
@@ -35,7 +35,7 @@ public class CodecTest {
     String name = "name";
     Stream stream =
         Stream.builder()
-            .role(Role.ADMIN.getAlias())
+            .scope(Scope.ADMIN.getAlias())
             .type(Device.CAMERA.getAlias())
             .uri("xxx")
             .build();
@@ -63,25 +63,25 @@ public class CodecTest {
       Route.Builder route = Route.builder().id(String.valueOf(id)).name("route " + id);
       route.addStream(
           Stream.builder()
-              .role(Role.ADMIN.getAlias())
+              .scope(Scope.ADMIN.getAlias())
               .type(Device.CAMERA.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.ADMIN.getAlias())
+              .scope(Scope.ADMIN.getAlias())
               .type(Device.DEVICE.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.USER.getAlias())
+              .scope(Scope.USER.getAlias())
               .type(Device.CAMERA.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());
       route.addStream(
           Stream.builder()
-              .role(Role.USER.getAlias())
+              .scope(Scope.USER.getAlias())
               .type(Device.DEVICE.getAlias())
               .uri("srt::" + UUID.randomUUID().toString())
               .build());

@@ -80,7 +80,11 @@ public class RoomController {
         .forEach(
             x ->
                 builder.addStream(
-                    Stream.builder().type(x.getType()).uri(x.getUri()).role(x.getRole()).build()));
+                    Stream.builder()
+                        .type(x.getType())
+                        .uri(x.getUri())
+                        .scope(x.getScope())
+                        .build()));
     return builder.build();
   }
 }
