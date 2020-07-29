@@ -3,6 +3,7 @@ package com.github.dantin.cubic.room.entity.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import java.util.Date;
 
 /** Stream is a model class that contains binary stream information. */
@@ -20,6 +21,8 @@ public class Stream {
 
   private Integer port;
 
+  private String path;
+
   private Date createAt;
 
   private String roomId;
@@ -28,7 +31,10 @@ public class Stream {
 
   @JsonIgnore
   public String getUri() {
-    return String.format("%s://%s:%d", protocol, host, port);
+    if (Strings.isNullOrEmpty(this.path)) {
+      return String.format("%s://%s:%d", protocol, host, port);
+    }
+    return String.format("%s://%s:%d/%s", protocol, host, port, path);
   }
 
   public String getId() {
@@ -79,6 +85,14 @@ public class Stream {
     this.port = port;
   }
 
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
   public Date getCreateAt() {
     return createAt;
   }
@@ -110,13 +124,14 @@ public class Stream {
         && Objects.equal(protocol, stream.protocol)
         && Objects.equal(host, stream.host)
         && Objects.equal(port, stream.port)
+        && Objects.equal(path, stream.path)
         && Objects.equal(createAt, stream.createAt)
         && Objects.equal(roomId, stream.roomId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id, type, scope, protocol, host, port, createAt, roomId);
+    return Objects.hashCode(id, type, scope, protocol, host, port, path, createAt, roomId);
   }
 
   @Override
@@ -129,6 +144,7 @@ public class Stream {
         .add("protocol", protocol)
         .add("host", host)
         .add("port", port)
+        .add("path", path)
         .add("roomId", roomId)
         .add("createAt", createAt)
         .toString();

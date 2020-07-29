@@ -6,7 +6,7 @@
     </sql>
 
   <sql id="BASE_COLUMNS">
-        id, type, scope, protocol, host, port, create_at, room_id
+        id, type, scope, protocol, host, port, path,create_at, room_id
     </sql>
 
   <resultMap id="streamMap" type="com.github.dantin.cubic.room.entity.model.Stream">
@@ -16,6 +16,7 @@
     <result property="protocol" column="protocol" javaType="java.lang.String" jdbcType="VARCHAR"/>
     <result property="host" column="host" javaType="java.lang.String" jdbcType="VARCHAR"/>
     <result property="port" column="port" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+    <result property="path" column="path" javaType="java.lang.String" jdbcType="VARCHAR"/>
     <result property="createAt" column="create_at" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     <result property="roomId" column="room_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
   </resultMap>

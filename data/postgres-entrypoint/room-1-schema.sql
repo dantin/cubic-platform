@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS t_stream (
     protocol VARCHAR(16) NOT NULL,
     host VARCHAR(255) NOT NULL,
     port INTEGER NOT NULL,
+    path VARCHAR(255) NOT NULL,
     create_at TIMESTAMP NOT NULL,
     room_id VARCHAR(32) NOT NULL,
     PRIMARY KEY (id)
